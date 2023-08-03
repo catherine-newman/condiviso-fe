@@ -1,17 +1,29 @@
-import React from 'react';
-import { View, Text, Button } from 'react-native';
+import { View, Text, Button, StyleSheet } from 'react-native';
+import ImageDisplay from '../components/ImageDisplay'
 
+const HomeScreen = () => {
 
-const HomeScreen = ({Navigation}) => {
-    const handleImageDisplayPress = () => {
-        Navigation.navigate('ImageDisplay')
-    }
     return (
-        <View>
+        <View style={styles.container}>
             <Text>Home Screen</Text>
-            <Button title="ImageDisplay" onPress={handleImageDisplayPress}/>
+            <ImageDisplay />
         </View>
     )
 }
 
+
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: "#fff",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    image: {
+      width: 200,
+      height: 200,
+    },
+  });
+
+  
 export default HomeScreen;
