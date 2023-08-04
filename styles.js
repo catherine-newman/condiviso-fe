@@ -1,8 +1,16 @@
 import { StyleSheet } from 'react-native';
 
 export const navStyles = StyleSheet.create({
-  container: {
+  lowerNavContainer: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-around',
+    marginBottom: 30
   },
+  userNavContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around'
+  },
+
+ 
+  
 });

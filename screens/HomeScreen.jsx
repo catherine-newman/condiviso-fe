@@ -1,5 +1,6 @@
 import { View, Text, Button, StyleSheet } from 'react-native';
 import ImageDisplay from '../components/ImageDisplay'
+import UserNav from '../components/UserNav';
 
 const HomeScreen = () => {
 
