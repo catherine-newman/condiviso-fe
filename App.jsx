@@ -1,37 +1,48 @@
-import { StyleSheet, Text, View } from "react-native";
-import { UserContextProvider } from './contexts/User';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { StyleSheet } from "react-native";
+import { UserContextProvider } from "./contexts/User";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "./screens/HomeScreen";
 import CalendarScreen from "./screens/CalendarScreen";
 import GroupChatScreen from "./screens/GroupChatScreen";
 import SignUpScreen from "./screens/SignUpScreen";
-import Nav from "./components/Nav";
-import UserNav from "./components/UserNav";
+import LowerNav from "./components/LowerNav";
+import UpperNav from "./components/UpperNav";
 import AddEventScreen from "./screens/AddEventScreen";
 import ProfileScreen from "./screens/ProfileScreen";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 
 const Stack = createStackNavigator();
 
 export default function App() {
-
   return (
-     <UserContextProvider>
-      <View style={styles.container}>
-        <NavigationContainer>
-        <UserNav />
-        <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen name="Add Event" component={AddEventScreen} />
-          <Stack.Screen name="Profile" component={ProfileScreen} />
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Calendar" component={CalendarScreen} />
-          <Stack.Screen name="Group Chat" component={GroupChatScreen} />
-          <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
-        </Stack.Navigator>
-        <Nav />
-        </NavigationContainer>
-      </View>
-     </UserContextProvider>
+    <UserContextProvider>
+      <SafeAreaProvider>
+        <GestureHandlerRootView style={styles.container}>
+          <SafeAreaView style={styles.container}>
+            <NavigationContainer>
+              <UpperNav />
+              <Stack.Navigator
+                initialRouteName="Home"
+                screenOptions={{
+                  headerShown: false,
+                  animationEnabled: false,
+                }}
+              >
+                <Stack.Screen name="Add Event" component={AddEventScreen} />
+                <Stack.Screen name="Profile" component={ProfileScreen} />
+                <Stack.Screen name="Home" component={HomeScreen} />
+                <Stack.Screen name="Calendar" component={CalendarScreen} />
+                <Stack.Screen name="Group Chat" component={GroupChatScreen} />
+                <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
+              </Stack.Navigator>
+              <LowerNav />
+            </NavigationContainer>
+          </SafeAreaView>
+        </GestureHandlerRootView>
+      </SafeAreaProvider>
+    </UserContextProvider>
   );
 }
 
@@ -39,14 +50,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-  }
+  },
 });
-
-
-
-
-
-
-
-
-
