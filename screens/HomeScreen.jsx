@@ -1,12 +1,14 @@
 import { View, Text, Button, StyleSheet } from 'react-native';
+import { useContext } from 'react';
 import LocationMap from '../components/LocationMap';
+import { LocalEventsContext } from '../contexts/LocalEvents'
 
 
-const HomeScreen = () => {
+const HomeScreen = ({localEvents, localEventsIsLoading}) => {
 
     return (
         
-          <LocationMap />
+          <LocationMap localEvents={localEvents} localEventsIsLoading={localEventsIsLoading}/>
       
     )
 }

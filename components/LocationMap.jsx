@@ -14,7 +14,9 @@ let locationEvent = [
   description: "Second Marker"
 },
 ]
-const LocationMap = () => {
+
+const LocationMap = ({localEvents, localEventsIsLoading}) => {
+
   const showLocation = () => {
     return locationEvent.map((event, index) => {
       return (
@@ -28,7 +30,6 @@ const LocationMap = () => {
       )
     })
   }
-
 
   return (
     <View style={styles.container}>
