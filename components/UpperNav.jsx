@@ -1,15 +1,13 @@
-import { Pressable } from "react-native";
 import { View, Text, StyleSheet } from "react-native";
 import { useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../contexts/User";
 import { navStyles } from "../styles/styles";
-import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
 import { useFonts, Jost_400Regular } from "@expo-google-fonts/jost";
 
-const UserNav = () => {
+const UpperNav = () => {
   const navigation = useNavigation();
   const { user } = useContext(UserContext);
 
@@ -27,19 +25,34 @@ const UserNav = () => {
   const onProfilePress = () => {
     navigation.navigate("Profile");
   };
+  const handleSignUpPress = () => {
+    navigation.navigate("SignUpScreen");
+  };
 
   if (user) {
     return (
       <View style={navStyles.upperNavContainer}>
-        <TouchableOpacity onPress={onProfilePress}>
-          <Ionicons
-            name="person-circle-outline"
-            size={45}
-            color="black"
-            style={styles.profileIcon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={onAddEventPress}>
+        {user && (
+          <TouchableOpacity onPress={onProfilePress} activeOpacity={0.5}>
+            <AntDesign
+              name="user"
+              size={35}
+              color="black"
+              style={styles.profileIcon}
+            />
+          </TouchableOpacity>
+        )}
+        {!user && (
+          <TouchableOpacity onPress={handleSignUpPress} activeOpacity={0.5}>
+            <AntDesign
+              name="login"
+              size={35}
+              color="black"
+              style={styles.profileIcon}
+            />
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity onPress={onAddEventPress} activeOpacity={0.8}>
           <View style={styles.addEvent}>
             <Text style={styles.text}>Add event</Text>
             <AntDesign
@@ -79,4 +92,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UserNav;
+export default UpperNav;

@@ -4,7 +4,8 @@ export const navStyles = StyleSheet.create({
   lowerNavContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginBottom: 30,
+    alignItems: "center",
+    paddingTop: 10,
   },
   upperNavContainer: {
     flexDirection: "row",
