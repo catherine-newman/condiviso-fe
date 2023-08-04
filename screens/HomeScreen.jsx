@@ -1,14 +1,13 @@
 import { View, Text, Button, StyleSheet } from 'react-native';
-import ImageDisplay from '../components/ImageDisplay'
-import UserNav from '../components/UserNav';
+import LocationMap from '../components/LocationMap';
+
 
 const HomeScreen = () => {
 
     return (
-        <View style={styles.container}>
-            <Text>Home Screen</Text>
-            <ImageDisplay />
-        </View>
+        
+          <LocationMap />
+      
     )
 }
 
