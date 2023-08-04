@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import { UserContextProvider } from './contexts/User'; 
+import { UserContextProvider } from './contexts/User';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from "./screens/HomeScreen";
@@ -14,18 +14,15 @@ import ProfileScreen from "./screens/ProfileScreen";
 const Stack = createStackNavigator();
 
 export default function App() {
+
   return (
      <UserContextProvider>
       <View style={styles.container}>
-
-
         <NavigationContainer>
         <UserNav />
-
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen name="Add Event" component={AddEventScreen} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
-
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Calendar" component={CalendarScreen} />
           <Stack.Screen name="Group Chat" component={GroupChatScreen} />
@@ -34,7 +31,7 @@ export default function App() {
         <Nav />
         </NavigationContainer>
       </View>
-     </UserContextProvider> 
+     </UserContextProvider>
   );
 }
 
@@ -44,3 +41,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   }
 });
+
+
+
+
+
+
+
+
+
