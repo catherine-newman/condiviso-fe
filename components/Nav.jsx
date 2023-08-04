@@ -2,7 +2,7 @@ import {useContext } from 'react';
 import { View, Button, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { UserContext } from "../contexts/User";
-import { navStyles } from '../styles';
+import { navStyles } from '../styles/styles';
 
 
 const Nav = () => {

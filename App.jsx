@@ -1,4 +1,8 @@
-import { StyleSheet, Text, View } from "react-native";
+import {
+  StyleSheet,
+  View,
+  SafeAreaView,
+} from "react-native";
 import { UserContextProvider } from './contexts/User';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -10,6 +14,7 @@ import Nav from "./components/Nav";
 import UserNav from "./components/UserNav";
 import AddEventScreen from "./screens/AddEventScreen";
 import ProfileScreen from "./screens/ProfileScreen";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const Stack = createStackNavigator();
 
@@ -17,10 +22,11 @@ export default function App() {
 
   return (
      <UserContextProvider>
-      <View style={styles.container}>
+      <GestureHandlerRootView style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <NavigationContainer>
         <UserNav />
-        <Stack.Navigator initialRouteName="Home">
+        <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Add Event" component={AddEventScreen} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
@@ -30,7 +36,8 @@ export default function App() {
         </Stack.Navigator>
         <Nav />
         </NavigationContainer>
-      </View>
+      </SafeAreaView>
+      </GestureHandlerRootView>
      </UserContextProvider>
   );
 }
