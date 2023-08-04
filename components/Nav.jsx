@@ -27,7 +27,7 @@ const Nav = () => {
   }
 
   return (
-    <View style={navStyles.container}>
+    <View style={navStyles.lowerNavContainer}>
 
       <TouchableOpacity>
         <Button title="Home" onPress={handleHomePress}/>
