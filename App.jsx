@@ -10,7 +10,6 @@ import Nav from "./components/Nav";
 import UserNav from "./components/UserNav";
 import AddEventScreen from "./screens/AddEventScreen";
 import ProfileScreen from "./screens/ProfileScreen";
-import { useState } from "react";
 
 const Stack = createStackNavigator();
 

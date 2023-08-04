@@ -81,11 +81,3 @@ module.exports = {
     getCoordinates,
     getFuzzyCoordinatesFromCoordinate,
 }
-
-// const testFunc = async () => {
-//     const result = await getFuzzyCoordinatesFromCoordinate("-2.231366", 53.481402);
-//     console.log(result);
-
-// }
-
-// testFunc();
