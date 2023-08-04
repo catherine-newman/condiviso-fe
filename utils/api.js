@@ -1,4 +1,4 @@
-const axios = require("axios");
+import axios from 'axios';
 
 const condivisoApi = axios.create({
     baseURL: "https://condiviso-be.onrender.com/api"
