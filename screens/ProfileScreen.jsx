@@ -18,6 +18,7 @@ const ProfileScreen = () => {
   const { user } = useContext(UserContext);
   const [profileData, setProfileData] = useState([]);
   const navigation = useNavigation();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -42,11 +43,13 @@ const ProfileScreen = () => {
         const eventsRes = await getEvents(user._id);
         data.push({ title: "Hosting Events", data: eventsRes.events });
         setProfileData(data);
+        setLoading(false);
       } catch (err) {
         console.log(err);
       }
     };
     if (user._id) {
+      setLoading(true);
       fetchProfileData();
     }
   }, [user, setProfileData]);
@@ -55,6 +58,8 @@ const ProfileScreen = () => {
     if (item.recipe_name) navigation.navigate("Recipe Screen", { item });
     if (item.event_name) navigation.navigate("Event Screen", { item });
   };
+
+  if (loading) return <View style={styles.container}></View>;
 
   return (
     <View style={styles.container}>
