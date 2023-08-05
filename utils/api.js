@@ -22,6 +22,15 @@ const getSingleUser = (user_id) => {
     })
 }
 
+const getRecipes = async (user_id) => {
+    const params = {}
+    if (user_id) params.user_id = user_id;
+    const res = await condivisoApi.get(`/recipes`, {
+        params: params
+    })
+    return res.data;
+}
+
 const getEvents = async (user_id, from_date, to_date, lon, lat, dist, unit, spaces) => {
     const params = {};
     if (user_id) params.user_id = user_id;
@@ -80,4 +89,5 @@ module.exports = {
     getEvents,
     getCoordinates,
     getFuzzyCoordinatesFromCoordinate,
+    getRecipes,
 }

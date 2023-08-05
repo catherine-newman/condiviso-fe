@@ -5,19 +5,11 @@ import { UserContext } from "../contexts/User";
 import { navStyles } from "../styles/styles";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
-import { useFonts, Jost_400Regular } from "@expo-google-fonts/jost";
+import { Jost_400Regular } from "@expo-google-fonts/jost";
 
 const UpperNav = () => {
   const navigation = useNavigation();
   const { user } = useContext(UserContext);
-
-  let [fontsLoaded] = useFonts({
-    Jost_400Regular,
-  });
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   const onAddEventPress = () => {
     navigation.navigate("Add Event");
