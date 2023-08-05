@@ -8,11 +8,4 @@ export const navStyles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 10,
   },
-  upperNavContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingBottom: 10,
-    paddingTop: 10,
-  },
 });

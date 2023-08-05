@@ -1,47 +1,53 @@
 import { View, Text, StyleSheet } from "react-native";
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../contexts/User";
-import { navStyles } from "../styles/styles";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
-import { Jost_400Regular } from "@expo-google-fonts/jost";
 
 const UpperNav = () => {
   const navigation = useNavigation();
   const { user } = useContext(UserContext);
+  const [currentScreen, setCurrentScreen] = useState("");
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("state", () => {
+      const currentRoute = navigation.getCurrentRoute();
+      const screenName = currentRoute.name;
+      setCurrentScreen(screenName);
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const onAddEventPress = () => {
     navigation.navigate("Add Event");
   };
-  const onProfilePress = () => {
-    navigation.navigate("Profile");
-  };
-  const handleSignUpPress = () => {
-    navigation.navigate("SignUpScreen");
+
+  const handleGoBack = () => {
+    navigation.goBack();
   };
 
   if (user) {
     return (
-      <View style={navStyles.upperNavContainer}>
-        {user && (
-          <TouchableOpacity onPress={onProfilePress} activeOpacity={0.5}>
-            <AntDesign
-              name="user"
-              size={35}
-              color="black"
-              style={styles.profileIcon}
-            />
-          </TouchableOpacity>
-        )}
-        {!user && (
-          <TouchableOpacity onPress={handleSignUpPress} activeOpacity={0.5}>
-            <AntDesign
-              name="login"
-              size={35}
-              color="black"
-              style={styles.profileIcon}
-            />
+      <View
+        style={
+          currentScreen === "Home"
+            ? styles.upperNavContainerHome
+            : styles.upperNavContainer
+        }
+      >
+        {currentScreen !== "Home" && (
+          <TouchableOpacity onPress={handleGoBack} activeOpacity={0.8}>
+            <View style={styles.back}>
+              <AntDesign
+                name="arrowleft"
+                size={25}
+                color="black"
+                style={styles.addEventIcon}
+              />
+              <Text style={styles.text}>Back</Text>
+            </View>
           </TouchableOpacity>
         )}
         <TouchableOpacity onPress={onAddEventPress} activeOpacity={0.8}>
@@ -61,20 +67,40 @@ const UpperNav = () => {
 };
 
 const styles = StyleSheet.create({
+  upperNavContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingBottom: 10,
+    paddingTop: 10,
+  },
+
+  upperNavContainerHome: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    paddingBottom: 10,
+    paddingTop: 10,
+  },
+
   addEvent: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 10,
     backgroundColor: "#F1C046",
-    marginRight: 20,
+    marginRight: 15,
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 15,
   },
 
-  profileIcon: {
-    marginLeft: 20,
+  back: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 5,
+    marginLeft: 15,
   },
 
   text: {

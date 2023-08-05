@@ -33,6 +33,13 @@ const LowerNav = () => {
     navigation.navigate("Group Chat");
   };
 
+  const onProfilePress = () => {
+    navigation.navigate("Profile");
+  };
+  const handleSignUpPress = () => {
+    navigation.navigate("SignUpScreen");
+  };
+
   return (
     <View style={navStyles.lowerNavContainer}>
       <TouchableOpacity
@@ -56,6 +63,24 @@ const LowerNav = () => {
           color={currentScreen === "Calendar" ? "#5daa80" : "black"}
         />
       </TouchableOpacity>
+      {user && (
+        <TouchableOpacity onPress={onProfilePress} activeOpacity={0.5}>
+          <AntDesign
+            name="user"
+            size={30}
+            color={currentScreen === "Profile" ? "#5daa80" : "black"}
+          />
+        </TouchableOpacity>
+      )}
+      {!user && (
+        <TouchableOpacity onPress={handleSignUpPress} activeOpacity={0.5}>
+          <AntDesign
+            name="login"
+            size={30}
+            color={currentScreen === "SignUpScreen" ? "#5daa80" : "black"}
+          />
+        </TouchableOpacity>
+      )}
       {user && (
         <TouchableOpacity
           onPress={handleInboxPress}
