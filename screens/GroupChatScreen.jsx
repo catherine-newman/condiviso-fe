@@ -1,14 +1,12 @@
-import React from 'react';
-import { View, Text, Button } from 'react-native';
-
+import React from "react";
+import { View, Text, Button } from "react-native";
 
 const CalendarScreen = () => {
-   
-    return (
-        <View>
-            <Text>Group Chat</Text>
-        </View>
-    )
-}
+  return (
+    <View>
+      <Text>Group Chat</Text>
+    </View>
+  );
+};
 
 export default CalendarScreen;
