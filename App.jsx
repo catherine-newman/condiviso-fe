@@ -17,9 +17,6 @@ const Stack = createStackNavigator();
 
 export default function App() {
 
- const [localEvents, setLocalEvents] = useState([]);
-const [localEventsIsLoading, setLocalEventsIsLoading] = useState(true);
- 
 useEffect(() => {
   getEvents().then((responseData) => {
     setLocalEvents(responseData.events);
@@ -41,7 +38,7 @@ useEffect(() => {
           <Stack.Screen name="Add Event" component={AddEventScreen} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
 
-          <Stack.Screen name="Home" component={HomeScreen} localEvents={localEvents} localEventsIsLoading={localEventsIsLoading}/>
+          <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Calendar" component={CalendarScreen} />
           <Stack.Screen name="Group Chat" component={GroupChatScreen} />
           <Stack.Screen name="SignUpScreen" component={SignUpScreen} />

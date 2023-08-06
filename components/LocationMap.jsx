@@ -15,7 +15,7 @@ let locationEvent = [
 },
 ]
 
-const LocationMap = ({localEvents, localEventsIsLoading}) => {
+const LocationMap = () => {
 
   const showLocation = () => {
     return locationEvent.map((event, index) => {

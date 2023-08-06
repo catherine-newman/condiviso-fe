@@ -4,11 +4,11 @@ import LocationMap from '../components/LocationMap';
 import { LocalEventsContext } from '../contexts/LocalEvents'
 
 
-const HomeScreen = ({localEvents, localEventsIsLoading}) => {
+const HomeScreen = () => {
 
     return (
         
-          <LocationMap localEvents={localEvents} localEventsIsLoading={localEventsIsLoading}/>
+          <LocationMap />
       
     )
 }
