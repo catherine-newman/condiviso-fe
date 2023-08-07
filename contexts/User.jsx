@@ -17,8 +17,7 @@ export const UserContextProvider = ({ children }) => {
   });
 
   const [userPosition, setUserPosition] = useState({lat:null,lon:null});
-  
-   const [localEvents, setLocalEvents] = useState("initialValue")
+
    
   return (
     <UserContext.Provider value={{ user, setUser, userPosition, setUserPosition, localEvents, setLocalEvents }}>

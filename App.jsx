@@ -1,11 +1,8 @@
 
-import { useState, useEffect } from 'react';
-import { StyleSheet, Text, View } from "react-native";
 import { StyleSheet } from "react-native";
 import { UserContextProvider } from "./contexts/User";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-
 import HomeScreen from "./screens/HomeScreen";
 import CalendarScreen from "./screens/CalendarScreen";
 import GroupChatScreen from "./screens/GroupChatScreen";
@@ -14,7 +11,6 @@ import LowerNav from "./components/LowerNav";
 import UpperNav from "./components/UpperNav";
 import AddEventScreen from "./screens/AddEventScreen";
 import ProfileScreen from "./screens/ProfileScreen";
-import { getEvents } from "./utils/api"
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import {
