@@ -5,8 +5,7 @@ import { useEffect, useContext } from "react";
 import { UserContext } from "../contexts/User";
 import { getCoordinates } from "../utils/api";
 import * as Location from "expo-location";
-import LocationMap from '../components/LocationMap';
-import { LocalEventsContext } from '../contexts/LocalEvents'
+import LocationMap from "../components/LocationMap";
 
 const HomeScreen = () => {
   const { user, userPosition, setUserPosition } = useContext(UserContext);
