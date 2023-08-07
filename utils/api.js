@@ -31,6 +31,11 @@ const getRecipes = async (user_id) => {
     return res.data;
 }
 
+const getRecipe = async (recipe_id) => {
+    const res = await condivisoApi.get(`/recipes/${recipe_id}`)
+    return res.data;
+}
+
 const getEvents = async (user_id, from_date, to_date, lon, lat, dist, unit, spaces) => {
     const params = {};
     if (user_id) params.user_id = user_id;
@@ -81,6 +86,21 @@ const getFuzzyCoordinatesFromCoordinate = async (lon, lat) => {
     }
 };
 
+const patchAttendees = async (event_id, patchBody) => {
+    try {
+        const res = await condivisoApi.patch(`/events/${event_id}`, {
+            attendees: patchBody.attendees,
+            event_name: patchBody.event_name,
+            event_duration: patchBody.event_duration,
+            event_date: patchBody.event_date,
+            max_attendees: patchBody.max_attendees
+        })
+        return res.data;
+    } catch(err) {
+        console.log(err)
+    }
+}
+
 
 
 module.exports = {
@@ -90,4 +110,6 @@ module.exports = {
     getCoordinates,
     getFuzzyCoordinatesFromCoordinate,
     getRecipes,
+    getRecipe,
+    patchAttendees,
 }
