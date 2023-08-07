@@ -8,8 +8,8 @@ import {
 } from "react-native";
 import { useState, useEffect, useContext } from "react";
 import { UserContext } from "../contexts/User";
-import { getRecipes, getEvents } from "../utils/api";
-import { useNavigation } from "@react-navigation/native";
+import { getRecipes, getEvents, getSingleUser } from "../utils/api";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { getDownloadURL, ref } from "firebase/storage";
 import { recipeImagesRef } from "../firebaseConfig";
 import { formatDate } from "../utils/formatDate";
@@ -18,13 +18,43 @@ const ProfileScreen = () => {
   const { user } = useContext(UserContext);
   const [profileData, setProfileData] = useState([]);
   const navigation = useNavigation();
-  const [loading, setLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(true);
+  const [userLoading, setUserLoading] = useState(true);
+  const [userInfo, setUserInfo] = useState({});
+  const [profileId, setProfileId] = useState(null);
+  const route = useRoute();
 
   useEffect(() => {
-    const fetchProfileData = async () => {
+    const getUserData = async (item) => {
+      try {
+        const res = await getSingleUser(item);
+        setUserInfo(res);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    if (route.params !== undefined) {
+      const { item } = route.params;
+      setProfileId(item);
+      getUserData(item);
+      setUserLoading(false);
+    } else {
+      setProfileId(user._id);
+      setUserInfo({
+        user_name: user.user_name,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        about_me: user.about_me,
+      });
+      setUserLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchProfileData = async (id) => {
       try {
         const data = [];
-        const recipesRes = await getRecipes(user._id);
+        const recipesRes = await getRecipes(id);
         const recipeImagePaths = recipesRes.recipes.map((recipe) => {
           return recipe.recipe_image;
         });
@@ -40,26 +70,27 @@ const ProfileScreen = () => {
           return newRecipe;
         });
         data.push({ title: "My Recipes", data: newRecipes });
-        const eventsRes = await getEvents(user._id);
+        const eventsRes = await getEvents(id);
         data.push({ title: "Hosting Events", data: eventsRes.events });
         setProfileData(data);
-        setLoading(false);
+        setProfileLoading(false);
       } catch (err) {
         console.log(err);
       }
     };
-    if (user._id) {
-      setLoading(true);
-      fetchProfileData();
+    if (profileId) {
+      setProfileLoading(true);
+      fetchProfileData(profileId);
     }
-  }, [user, setProfileData]);
+  }, [user, setProfileData, profileId]);
 
   const handlePress = (item) => {
     if (item.recipe_name) navigation.navigate("Recipe Screen", { item });
     if (item.event_name) navigation.navigate("Event Screen", { item });
   };
 
-  if (loading) return <View style={styles.container}></View>;
+  if (profileLoading || userLoading)
+    return <View style={styles.container}></View>;
 
   return (
     <View style={styles.container}>
@@ -67,11 +98,11 @@ const ProfileScreen = () => {
         ListHeaderComponent={
           <>
             <View style={styles.profileCard}>
-              <Text style={styles.largeProfileText}>{user.user_name}</Text>
+              <Text style={styles.largeProfileText}>{userInfo.user_name}</Text>
               <Text style={styles.text}>
-                {user.first_name} {user.last_name}
+                {userInfo.first_name} {userInfo.last_name}
               </Text>
-              <Text style={styles.text}>{user.about_me}</Text>
+              <Text style={styles.text}>{userInfo.about_me}</Text>
             </View>
           </>
         }

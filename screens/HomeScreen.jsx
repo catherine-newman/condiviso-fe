@@ -1,5 +1,12 @@
-import { View, Text, StyleSheet, SectionList, TouchableOpacity, Image, } from "react-native";
-import MapView, {  Marker } from "react-native-maps";
+import {
+  View,
+  Text,
+  StyleSheet,
+  SectionList,
+  TouchableOpacity,
+  Image,
+} from "react-native";
+import MapView, { Marker } from "react-native-maps";
 import { useEffect, useContext, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { formatDate } from "../utils/formatDate";
@@ -7,29 +14,31 @@ import { UserContext } from "../contexts/User";
 import { getCoordinates, getEvents } from "../utils/api";
 import * as Location from "expo-location";
 
-
 const HomeScreen = () => {
   const navigation = useNavigation();
- const { user, userPosition, setUserPosition } = useContext(UserContext);
- const [ selectedEvent, setSelectedEvent ] = useState();
- const [isLoading, setIsLoading] = useState(true);
- const [selectedEventIsLoading, setSelectedEventIsLoading] = useState(true);
- const [mapEvents, setMapEvents] = useState([]);
- const [selectedEventCard, setSelectedEventCard] = useState();
+  const { user, userPosition, setUserPosition } = useContext(UserContext);
+  const [selectedEvent, setSelectedEvent] = useState();
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedEventIsLoading, setSelectedEventIsLoading] = useState(true);
+  const [mapEvents, setMapEvents] = useState([]);
+  const [selectedEventCard, setSelectedEventCard] = useState();
 
- useEffect(() => {
-   getEvents(null, null, null, userPosition.lon, userPosition.lat).then((data) => { 
-    if (data && data.events) {
-      setMapEvents(data.events);
+  useEffect(() => {
+    if (userPosition.lat !== null && userPosition.lon !== null) {
+      getEvents(null, null, null, userPosition.lon, userPosition.lat)
+        .then((data) => {
+          if (data && data.events) {
+            setMapEvents(data.events);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching events:", error);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
-   })
-   .catch((error) => {
-    console.error("Error fetching events:", error);
-  })
-  .finally(() => {
-    setIsLoading(false);
-  });
- }, [])
+  }, [userPosition]);
 
   useEffect(() => {
     const getLocation = async () => {
@@ -59,19 +68,22 @@ const HomeScreen = () => {
     return mapEvents.map((event, index) => {
       return (
         <Marker
-        key={event._id}
-        coordinate={{"latitude": event.coordinate_fuzzy.coordinates[1], "longitude": event.coordinate_fuzzy.coordinates[0]}}
-        title={event.event_name}
-        description={event.event_description}
-        onPress={() => handleMarkerPress(event)}
+          key={event._id}
+          coordinate={{
+            latitude: event.coordinate_fuzzy.coordinates[1],
+            longitude: event.coordinate_fuzzy.coordinates[0],
+          }}
+          title={event.event_name}
+          description={event.event_description}
+          onPress={() => handleMarkerPress(event)}
         />
-      )
-    })
-  }
+      );
+    });
+  };
   const handleMarkerPress = (event) => {
     setSelectedEvent(event);
-    setSelectedEventIsLoading(false)
-  }
+    setSelectedEventIsLoading(false);
+  };
 
   const handleCardPress = (item) => {
     navigation.navigate("Event Screen", { item });
@@ -79,7 +91,7 @@ const HomeScreen = () => {
 
   const mapHeight = selectedEventIsLoading ? "90%" : "60%";
 
-if(isLoading) return <Text>Loading...</Text>
+  if (isLoading) return <Text>Loading...</Text>;
   return (
    <View style={styles.container}>
       <MapView
@@ -123,18 +135,12 @@ if(isLoading) return <Text>Loading...</Text>
           <Text style={styles.dateText}>{formatDate(item.event_date)}, {item.event_city}</Text>
           <Text style={styles.descriptionText}>{item.event_description}</Text>
         </TouchableOpacity>
-
       )}
-    />
-    ) : (
-      <Text style={styles.selectAnEventPrompt}>Please select an event on the map</Text>
-    )}
-   </View>       
-    );
+    </View>
+  );
 };
 
 export default HomeScreen;
-
 
 const styles = StyleSheet.create({
   container: {
@@ -186,9 +192,8 @@ const styles = StyleSheet.create({
     padding: 16,
     left: "25%",
     width: "50%",
-    textAlign: "center"
-
-  }, 
+    textAlign: "center",
+  },
   selectAnEventPrompt: {
     height: "15%",
     fontSize: 18,
