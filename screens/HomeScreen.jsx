@@ -24,7 +24,6 @@ const HomeScreen = () => {
   const [selectedEventCard, setSelectedEventCard] = useState();
 
   useEffect(() => {
-    console.log(userPosition.lat, userPosition.lon);
     if (userPosition.lat !== null && userPosition.lon !== null) {
       getEvents(null, null, null, userPosition.lon, userPosition.lat)
         .then((data) => {
