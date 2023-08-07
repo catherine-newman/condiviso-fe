@@ -3,6 +3,7 @@ import React, { createContext, useState } from "react";
 export const UserContext = createContext();
 
 export const UserContextProvider = ({ children }) => {
+  const [localEvents, setLocalEvents] = useState("initialValue")
   const [user, setUser] = useState({
     _id: "64c7abf68c2d17441844e6fd",
     first_name: "Marchelle",
@@ -16,8 +17,10 @@ export const UserContextProvider = ({ children }) => {
   });
 
   const [userPosition, setUserPosition] = useState({lat:null,lon:null});
+
+   
   return (
-    <UserContext.Provider value={{ user, setUser, userPosition, setUserPosition }}>
+    <UserContext.Provider value={{ user, setUser, userPosition, setUserPosition, localEvents, setLocalEvents }}>
       {children}
     </UserContext.Provider>
   );

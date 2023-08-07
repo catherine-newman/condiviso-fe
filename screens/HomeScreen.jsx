@@ -1,10 +1,12 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text } from "react-native";
 import ImageDisplay from "../components/ImageDisplay";
 import UserNav from "../components/UpperNav";
 import { useEffect, useContext } from "react";
 import { UserContext } from "../contexts/User";
 import { getCoordinates } from "../utils/api";
 import * as Location from "expo-location";
+import LocationMap from '../components/LocationMap';
+import { LocalEventsContext } from '../contexts/LocalEvents'
 
 const HomeScreen = () => {
   const { user, userPosition, setUserPosition } = useContext(UserContext);
@@ -32,24 +34,10 @@ const HomeScreen = () => {
     getLocation();
   }, []);
   return (
-    <View style={styles.container}>
-      <Text>
-        Lat: {userPosition.lat} Lon: {userPosition.lon}
-      </Text>
-      <ImageDisplay />
-    </View>
-  );
+        
+          <LocationMap />
+      
+    );
 };
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  image: {
-    width: 200,
-    height: 200,
-  },
-});
+
 export default HomeScreen;

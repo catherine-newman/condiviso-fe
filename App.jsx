@@ -1,3 +1,4 @@
+
 import { StyleSheet } from "react-native";
 import { UserContextProvider } from "./contexts/User";
 import { NavigationContainer } from "@react-navigation/native";
@@ -23,6 +24,7 @@ import SingleEventScreen from "./screens/SingleEventScreen";
 const Stack = createStackNavigator();
 
 export default function App() {
+
   let [fontsLoaded] = useFonts({
     Jost_400Regular,
     Jost_600SemiBold,
@@ -65,6 +67,7 @@ export default function App() {
       </SafeAreaProvider>
     </UserContextProvider>
   );
+  
 }
 
 const styles = StyleSheet.create({
