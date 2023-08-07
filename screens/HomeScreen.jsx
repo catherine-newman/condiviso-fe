@@ -1,14 +1,36 @@
-import { View, Text } from "react-native";
-import ImageDisplay from "../components/ImageDisplay";
-import UserNav from "../components/UpperNav";
-import { useEffect, useContext } from "react";
+import { View, Text,StyleSheet, SectionList, TouchableOpacity, Image, } from "react-native";
+import MapView, {  Marker } from "react-native-maps";
+import { useEffect, useContext, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { formatDate } from "../utils/formatDate";
 import { UserContext } from "../contexts/User";
-import { getCoordinates } from "../utils/api";
+import { getCoordinates, getEvents } from "../utils/api";
 import * as Location from "expo-location";
-import LocationMap from "../components/LocationMap";
+
 
 const HomeScreen = () => {
-  const { user, userPosition, setUserPosition } = useContext(UserContext);
+  const navigation = useNavigation();
+ const { user, userPosition, setUserPosition } = useContext(UserContext);
+ const [ selectedEvent, setSelectedEvent ] = useState();
+ const [isLoading, setIsLoading] = useState(true);
+ const [selectedEventIsLoading, setSelectedEventIsLoading] = useState(true);
+ const [mapEvents, setMapEvents] = useState([]);
+ const [selectedEventCard, setSelectedEventCard] = useState();
+
+ useEffect(() => {
+   getEvents(null, null, null, userPosition.lon, userPosition.lat).then((data) => { 
+    if (data && data.events) {
+      setMapEvents(data.events);
+    }
+   })
+   .catch((error) => {
+    console.error("Error fetching events:", error);
+  })
+  .finally(() => {
+    setIsLoading(false);
+  });
+ }, [])
+
   useEffect(() => {
     const getLocation = async () => {
       try {
@@ -32,11 +54,107 @@ const HomeScreen = () => {
     };
     getLocation();
   }, []);
+
+  const showLocation = () => {
+    return mapEvents.map((event, index) => {
+      return (
+        <Marker
+        key={event._id}
+        coordinate={{"latitude": event.coordinate_fuzzy.coordinates[1], "longitude": event.coordinate_fuzzy.coordinates[0]}}
+        title={event.event_name}
+        description={event.event_description}
+        onPress={() => handleMarkerPress(event)}
+        />
+      )
+    })
+  }
+  const handleMarkerPress = (event) => {
+    setSelectedEvent(event);
+    setSelectedEventIsLoading(false)
+  }
+
+  const handleCardPress = (item) => {
+    navigation.navigate("Event Screen", { item });
+  };
+
+  const mapHeight = selectedEventIsLoading ? "90%" : "60%";
+
+if(isLoading) return <Text>Loading...</Text>
   return (
-        
-          <LocationMap />
-      
+   <View>
+      <MapView
+   style={[styles.map, { height: mapHeight }]}
+  initialRegion={
+    {
+      latitude: userPosition.lat,
+      latitudeDelta: 0.005,
+      longitude: userPosition.lon,
+      longitudeDelta: 0.008,
+    }
+  }
+  >
+  {showLocation()}
+
+
+    </MapView >
+    {!selectedEventIsLoading ? (
+        <SectionList 
+      ListHeaderComponent={
+        <>
+          <View>
+            <Text>Selected Event:</Text>
+          </View> 
+        </>
+      }
+      sections={[
+        {
+          title: "",
+          data: [selectedEvent ]
+        },
+      ]}
+      keyExtractor={( item) => item._id}
+      renderItem={({ item }) => (
+        <TouchableOpacity
+        onPress={() => handleCardPress(item)}
+        >          
+          <Text>{item.event_name}</Text>
+          <Text>Hosted by {item.first_name}</Text>
+          <Text>{formatDate(item.event_date)}, {item.event_city}</Text>
+          <Text>{item.event_description}</Text>
+        </TouchableOpacity>
+
+      )}
+    />
+    ) : (
+      <Text style={styles.selectAnEventPrompt}>Please select an event on the map</Text>
+    )}
+   </View>       
     );
 };
 
 export default HomeScreen;
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  map: {
+    width: "100%",
+  },
+  mapOverlay: {
+    position: "absolute",
+    bottom: 5,
+    backgroundColor: "#ffffff",
+    borderWidth: 2,
+    borderRadius: 5,
+    padding: 16,
+    left: "25%",
+    width: "50%",
+    textAlign: "center"
+
+  }, 
+  selectAnEventPrompt: {
+    height: '10%'
+  }
+});
