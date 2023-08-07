@@ -1,4 +1,4 @@
-import { View, Text,StyleSheet, SectionList, TouchableOpacity, Image, } from "react-native";
+import { View, Text, StyleSheet, SectionList, TouchableOpacity, Image, } from "react-native";
 import MapView, {  Marker } from "react-native-maps";
 import { useEffect, useContext, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -81,7 +81,7 @@ const HomeScreen = () => {
 
 if(isLoading) return <Text>Loading...</Text>
   return (
-   <View>
+   <View style={styles.container}>
       <MapView
    style={[styles.map, { height: mapHeight }]}
   initialRegion={
@@ -99,13 +99,13 @@ if(isLoading) return <Text>Loading...</Text>
     </MapView >
     {!selectedEventIsLoading ? (
         <SectionList 
-      ListHeaderComponent={
-        <>
-          <View>
-            <Text>Selected Event:</Text>
-          </View> 
-        </>
-      }
+      // ListHeaderComponent={
+      //   <>
+      //     <View>
+      //       <Text style={styles.largeText}>Selected Event:</Text>
+      //     </View> 
+      //   </>
+      // }
       sections={[
         {
           title: "",
@@ -116,11 +116,12 @@ if(isLoading) return <Text>Loading...</Text>
       renderItem={({ item }) => (
         <TouchableOpacity
         onPress={() => handleCardPress(item)}
+        style={styles.card}
         >          
-          <Text>{item.event_name}</Text>
-          <Text>Hosted by {item.first_name}</Text>
-          <Text>{formatDate(item.event_date)}, {item.event_city}</Text>
-          <Text>{item.event_description}</Text>
+          <Text style={styles.eventNameText}>{item.event_name}</Text>
+          <Text style={styles.cardText}>Hosted by {item.first_name}</Text>
+          <Text style={styles.dateText}>{formatDate(item.event_date)}, {item.event_city}</Text>
+          <Text style={styles.descriptionText}>{item.event_description}</Text>
         </TouchableOpacity>
 
       )}
@@ -138,6 +139,40 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "white",
+  },
+  card: {
+    backgroundColor: "#5daa80",
+  },
+    cardText: {
+      paddingLeft: 20,
+      fontSize: 16,
+      fontFamily: "Jost_400Regular",
+      color: "white",
+  },
+  dateText: {
+    paddingLeft: 20,
+    fontSize: 16,
+      fontFamily: "Jost_400Regular",
+      color: "white",
+      marginBottom: '5%'
+  },
+  descriptionText: {
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    fontSize: 16,
+    fontFamily: "Jost_400Regular",
+      backgroundColor: "white",
+      color: "black"
+  },
+  eventNameText: {
+    paddingLeft: 20,
+    fontSize: 25,
+    alignItems: "flex-start",
+    justifyContent: "center",
+      fontFamily: "Jost_600SemiBold",
+      marginVertical: "3%",
+      color: "white"
   },
   map: {
     width: "100%",
@@ -155,6 +190,10 @@ const styles = StyleSheet.create({
 
   }, 
   selectAnEventPrompt: {
-    height: '10%'
+    height: "15%",
+    fontSize: 18,
+    backgroundColor: "#5daa80",
+    color: "white",
+    fontFamily: "Jost_400Regular"
   }
 });
