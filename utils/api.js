@@ -86,6 +86,21 @@ const getFuzzyCoordinatesFromCoordinate = async (lon, lat) => {
     }
 };
 
+const patchAttendees = async (event_id, patchBody) => {
+    try {
+        const res = await condivisoApi.patch(`/events/${event_id}`, {
+            attendees: patchBody.attendees,
+            event_name: patchBody.event_name,
+            event_duration: patchBody.event_duration,
+            event_date: patchBody.event_date,
+            max_attendees: patchBody.max_attendees
+        })
+        return res.data;
+    } catch(err) {
+        console.log(err)
+    }
+}
+
 
 
 module.exports = {
@@ -96,4 +111,5 @@ module.exports = {
     getFuzzyCoordinatesFromCoordinate,
     getRecipes,
     getRecipe,
+    patchAttendees,
 }

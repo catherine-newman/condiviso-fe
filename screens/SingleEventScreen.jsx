@@ -2,7 +2,7 @@ import { Text, StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { formatDate } from "../utils/formatDate";
 import { useState, useEffect, useContext } from "react";
-import { getRecipe } from "../utils/api";
+import { getRecipe, patchAttendees } from "../utils/api";
 import { getDownloadURL, ref } from "firebase/storage";
 import { recipeImagesRef } from "../firebaseConfig";
 import MapView, { Marker } from "react-native-maps";
@@ -17,75 +17,144 @@ const SingleEventScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { item } = route.params;
-  console.log(item);
+  const [eventData, setEventData] = useState(JSON.parse(JSON.stringify(item)));
+  console.log(eventData);
   const [recipe, setRecipe] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isAttending, setIsAttending] = useState(true);
+  const [isRecipeLoading, setIsRecipeLoading] = useState(true);
+  const [isAttendingLoading, setIsAttendingLoading] = useState(true);
+  const [isAttending, setIsAttending] = useState(null);
+  const [attendClicked, setAttendClicked] = useState(false);
+  const [cancelClicked, setCancelClicked] = useState(false);
   const [portionIcons, setPortionsIcons] = useState([]);
   const [portions, setPortions] = useState(1);
 
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
-        const res = await getRecipe(item.recipes[0]);
+        const res = await getRecipe(eventData.recipes[0]);
         const recipeImageRef = ref(recipeImagesRef, res.recipe.recipe_image);
         const recipeImageURL = await getDownloadURL(recipeImageRef);
         newRecipe = { ...res.recipe };
         newRecipe.recipe_image = recipeImageURL;
-        console.log(newRecipe);
         setRecipe(newRecipe);
-        setIsLoading(false);
+        setIsRecipeLoading(false);
       } catch (err) {
         console.log(err);
       }
     };
-    setIsLoading(true);
+    setIsRecipeLoading(true);
     fetchRecipe();
-  }, [item, setRecipe]);
+  }, [setRecipe]);
 
   useEffect(() => {
-    if (user._id === item.user_id) setIsAttending(true);
-    const findUser = item.attendees.find((attendee) => {
+    const findUser = eventData.attendees.find((attendee) => {
       return attendee.user_id === user._id;
     });
-    if (findUser !== undefined) setIsAttending(true);
-    setIsAttending(false);
-  }, [user, item]);
+    if (findUser !== undefined) {
+      setIsAttending(true);
+      setIsAttendingLoading(false);
+    } else if (user._id === eventData.user_id) {
+      setIsAttending(true);
+      setIsAttendingLoading(false);
+    } else {
+      setIsAttending(false);
+      setIsAttendingLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     const renderIcons = () => {
-      return Array.from({ length: item.max_attendees }, (_, index) => (
+      return Array.from({ length: eventData.max_attendees }, (_, index) => (
         <View
+          key={index}
           style={
-            item.attendees[index].first_name
+            eventData.attendees[index] !== undefined
               ? styles.portionTaken
               : styles.portionFree
           }
         >
           <View>
             <MaterialCommunityIcons
-              key={index}
-              name="food-takeout-box"
+              name="food-fork-drink"
               size={30}
               color={"white"}
             />
           </View>
           <Text style={styles.text}>
             {" "}
-            {item.attendees[index].first_name || ""}
+            {eventData.attendees[index] !== undefined && isAttending
+              ? eventData.attendees[index].first_name
+              : ""}
           </Text>
         </View>
       ));
     };
     setPortionsIcons(renderIcons);
-  }, [item]);
+  }, [eventData, isAttending]);
+
+  useEffect(() => {
+    const addAttending = async () => {
+      const attendeePortions = Array(portions).fill({
+        first_name: user.first_name,
+        user_id: user._id,
+      });
+      const previousAttendees = JSON.parse(JSON.stringify(eventData.attendees));
+      const newAttendees = attendeePortions.concat(previousAttendees);
+      const patchBody = {
+        event_name: eventData.event_name,
+        event_date: eventData.event_date,
+        event_duration: eventData.event_duration,
+        attendees: newAttendees,
+        max_attendees: eventData.max_attendees,
+      };
+      try {
+        const res = await patchAttendees(eventData._id, patchBody);
+        setEventData(res.updatedEvent);
+        setIsAttending(true);
+        setAttendClicked(false);
+      } catch (err) {
+        setAttendClicked(false);
+        console.log(err);
+      }
+    };
+    if (attendClicked) {
+      addAttending();
+    }
+  }, [attendClicked]);
+
+  useEffect(() => {
+    const removeAttending = async () => {
+      const newAttendees = eventData.attendees.filter((attendee) => {
+        return attendee.user_id !== user._id;
+      });
+      const patchBody = {
+        event_name: eventData.event_name,
+        event_date: eventData.event_date,
+        event_duration: eventData.event_duration,
+        attendees: newAttendees,
+        max_attendees: eventData.max_attendees,
+      };
+      try {
+        const res = await patchAttendees(eventData._id, patchBody);
+        setEventData(res.updatedEvent);
+        setIsAttending(false);
+        setCancelClicked(false);
+      } catch (err) {
+        setCancelClicked(false);
+        console.log(err);
+      }
+    };
+    if (cancelClicked) {
+      removeAttending();
+    }
+  }, [cancelClicked]);
 
   const handleRecipePress = (item) => {
     navigation.navigate("Recipe Screen", { item });
   };
 
-  const handleUserPress = (item) => {
-    navigation.navigate("Profile", { item });
+  const handleUserPress = (eventData) => {
+    navigation.navigate("Profile", { eventData });
   };
 
   const handleMinusPress = () => {
@@ -96,35 +165,48 @@ const SingleEventScreen = () => {
   };
 
   const handlePlusPress = () => {
-    if (portions < item.spaces_free) {
+    if (portions < eventData.spaces_free) {
       const newPortions = portions + 1;
       setPortions(newPortions);
     }
+  };
+
+  const handleAttendPress = () => {
+    setIsAttending(true);
+    setAttendClicked(true);
+  };
+
+  const handleCancelPress = () => {
+    setIsAttending(false);
+    setCancelClicked(true);
   };
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.container}>
         <View style={styles.eventInfo}>
-          <Text style={styles.largeText}>{item.event_name}</Text>
+          <Text style={styles.largeText}>{eventData.event_name}</Text>
           <Text style={styles.boldText}>
             <AntDesign name="calendar" size={18} color="white" />{" "}
-            {formatDate(item.event_date)}
+            {formatDate(eventData.event_date)}
           </Text>
           <Text style={styles.boldText}>
             <Entypo name="location-pin" size={18} color="white" />{" "}
-            {item.event_city}
+            {eventData.event_city}
           </Text>
+          <Text style={styles.text}>{eventData.event_description}</Text>
 
-          <Text style={styles.largeText}>{item.user_name} is hosting!</Text>
+          <Text style={styles.largeText}>
+            {eventData.user_name} is hosting!
+          </Text>
           <TouchableOpacity
-            onPress={() => handleUserPress(item.user_id)}
+            onPress={() => handleUserPress(eventData.user_id)}
             style={styles.viewProfile}
           >
             <Text style={styles.buttonText}>Check profile</Text>
           </TouchableOpacity>
         </View>
-        {!isLoading && (
+        {!isRecipeLoading && (
           <>
             <Text style={styles.sectionText}>On the menu</Text>
             <TouchableOpacity
@@ -143,27 +225,27 @@ const SingleEventScreen = () => {
         <MapView
           style={styles.map}
           initialRegion={{
-            latitude: item.coordinate_fuzzy.coordinates[1],
+            latitude: eventData.coordinate_fuzzy.coordinates[1],
             latitudeDelta: 0.005,
-            longitude: item.coordinate_fuzzy.coordinates[0],
+            longitude: eventData.coordinate_fuzzy.coordinates[0],
             longitudeDelta: 0.005,
           }}
         >
           {!isAttending && (
             <Marker
-              key={item._id}
+              key={eventData._id}
               coordinate={{
-                latitude: item.coordinate_fuzzy.coordinates[1],
-                longitude: item.coordinate_fuzzy.coordinates[0],
+                latitude: eventData.coordinate_fuzzy.coordinates[1],
+                longitude: eventData.coordinate_fuzzy.coordinates[0],
               }}
             />
           )}
           {isAttending && (
             <Marker
-              key={item._id}
+              key={eventData._id}
               coordinate={{
-                latitude: item.coordinate.coordinates[1],
-                longitude: item.coordinate.coordinates[0],
+                latitude: eventData.coordinate.coordinates[1],
+                longitude: eventData.coordinate.coordinates[0],
               }}
             />
           )}
@@ -172,51 +254,78 @@ const SingleEventScreen = () => {
           For privacy, events you aren't attending have locations fuzzied up to
           200m
         </Text>
-        <View>
-          <Text style={styles.sectionText}>Portions</Text>
-          <View style={styles.portionIcons}>{portionIcons}</View>
-        </View>
-        <View style={styles.reservationContainer}>
-          {isAttending && (
-            <>
-              <Text style={styles.generalText}>
-                {item.spaces_free > 0 && "Sorry, this event is full :("}
-                {item.spaces_free === 0 && "Reserve your portion!"}
-              </Text>
-              <Text style={styles.boldTextBlack}>Portions:</Text>
-              <View style={styles.reservation}>
-                <TouchableOpacity
-                  style={styles.portionButtonLeft}
-                  onPress={handleMinusPress}
-                >
-                  <AntDesign name="minus" size={15} color="black" />
-                </TouchableOpacity>
-                <View style={styles.portionMiddleText}>
-                  <Text>{portions}</Text>
-                </View>
-                <TouchableOpacity
-                  style={styles.portionButtonRight}
-                  onPress={handlePlusPress}
-                >
-                  <AntDesign name="plus" size={15} color="black" />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.attendButton}>
-                  <Text style={styles.buttonTextWhite}>Attend!</Text>
-                </TouchableOpacity>
-              </View>
-            </>
-          )}
-          {!isAttending && (
-            <>
-              <Text style={styles.generalText}>
-                You're going to this event!
-              </Text>
-              <TouchableOpacity style={styles.cancelButton}>
-                <Text style={styles.buttonTextWhite}>Cancel</Text>
-              </TouchableOpacity>
-            </>
-          )}
-        </View>
+        {isAttending && (
+          <>
+            <Text style={styles.sectionText}>Address</Text>
+            <Text style={styles.addressText}>
+              {eventData.event_location}
+              {"\n"}
+              {eventData.postcode}
+            </Text>
+          </>
+        )}
+        {!isAttendingLoading && (
+          <>
+            <View>
+              <Text style={styles.sectionText}>Portions</Text>
+              <View style={styles.portionIcons}>{portionIcons}</View>
+            </View>
+            <View style={styles.reservationContainer}>
+              {!isAttending && (
+                <>
+                  <Text style={styles.generalText}>
+                    {eventData.spaces_free === 0 &&
+                      "Sorry, this event is full :("}
+                    {eventData.spaces_free > 0 && "Reserve your portion!"}
+                  </Text>
+                  {eventData.spaces_free > 0 && (
+                    <>
+                      <Text style={styles.boldTextBlack}>Portions:</Text>
+                      <View style={styles.reservation}>
+                        <TouchableOpacity
+                          style={styles.portionButtonLeft}
+                          onPress={handleMinusPress}
+                        >
+                          <AntDesign name="minus" size={15} color="black" />
+                        </TouchableOpacity>
+                        <View style={styles.portionMiddleText}>
+                          <Text>{portions}</Text>
+                        </View>
+                        <TouchableOpacity
+                          style={styles.portionButtonRight}
+                          onPress={handlePlusPress}
+                        >
+                          <AntDesign name="plus" size={15} color="black" />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={styles.attendButton}
+                          onPress={handleAttendPress}
+                        >
+                          <Text style={styles.buttonTextWhite}>Attend</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </>
+                  )}
+                </>
+              )}
+              {isAttending && (
+                <>
+                  <Text style={styles.generalText}>
+                    You're going to this event!
+                  </Text>
+                  {eventData.user_id !== user._id && (
+                    <TouchableOpacity
+                      style={styles.cancelButton}
+                      onPress={handleCancelPress}
+                    >
+                      <Text style={styles.buttonTextWhite}>Cancel</Text>
+                    </TouchableOpacity>
+                  )}
+                </>
+              )}
+            </View>
+          </>
+        )}
       </View>
     </ScrollView>
   );
@@ -330,11 +439,19 @@ const styles = StyleSheet.create({
     paddingTop: 5,
   },
 
+  addressText: {
+    fontSize: 18,
+    fontFamily: "Jost_400Regular",
+    // textAlign: "center",
+    paddingHorizontal: 20,
+    paddingTop: 5,
+  },
+
   portionIcons: {
     flexDirection: "row",
     width: "100%",
     paddingHorizontal: 20,
-    justifyContent: "space-evenly",
+    justifyContent: "center",
     flexWrap: "wrap",
   },
 
