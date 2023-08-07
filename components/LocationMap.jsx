@@ -1,30 +1,43 @@
-import React from "react";
-import { View, StyleSheet  } from "react-native";
+import React, {useContext, useEffect, useState} from "react";
+import { View, StyleSheet, Text  } from "react-native";
 import MapView, {  Marker } from "react-native-maps";
+import { UserContext } from "../contexts/User";
+import {getEvents} from "../utils/api";
 
-let locationEvent = [
-  {
-    title: "First",
-    location: {"latitude": 53.480759, "latitudeDelta": 0.005, "longitude": 2.242631, "longitudeDelta": 0.008},
-    description: "First Marker"
-},
-{
-  title: "Second",
-  location: {"latitude": 53.35196584826061, "latitudeDelta": 0.005, "longitude": 2.214005736329931, "longitudeDelta": 0.008},
-  description: "Second Marker"
-},
-]
+// let locationEvent = [
+//   {
+//     title: "First",
+//     location: {"latitude": 53.480759, "latitudeDelta": 0.005, "longitude": 2.242631, "longitudeDelta": 0.008},
+//     description: "First Marker"
+// },
+// {
+//   title: "Second",
+//   location: {"latitude": 53.35196584826061, "latitudeDelta": 0.005, "longitude": 2.214005736329931, "longitudeDelta": 0.008},
+//   description: "Second Marker"
+// },
+// ]
 
 const LocationMap = () => {
+  const { localEvents, setLocalEvents} = useContext(UserContext);
+  const [isLoading, setIsLoading] = useState(true);
+
+useEffect(() => {
+  getEvents().then((data) => {
+    setLocalEvents(data.events);
+    setIsLoading(false);
+  })
+}, [])
+if(isLoading) return <Text>Loading... </Text>
+
 
   const showLocation = () => {
-    return locationEvent.map((event, index) => {
+    return localEvents.map((event, index) => {
       return (
         <Marker
-        key={index}
-        coordinate={event.location}
-        title={event.title}
-        description={event.description}
+        key={event._id}
+        coordinate={{"latitude": event.coordinate_fuzzy.coordinates[1], "longitude": event.coordinate_fuzzy.coordinates[0]}}
+        title={event.event_name}
+        description={event.event_description}
        
         />
       )

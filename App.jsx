@@ -17,13 +17,6 @@ const Stack = createStackNavigator();
 
 export default function App() {
 
-useEffect(() => {
-  getEvents().then((responseData) => {
-    setLocalEvents(responseData.events);
-    setLocalEventsIsLoading(false);
-  })
- }, []);
-
  
   return (
 
@@ -47,6 +40,8 @@ useEffect(() => {
         </NavigationContainer>
       </View>
      </UserContextProvider> 
+ 
+
  
   );
   
