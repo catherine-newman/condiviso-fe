@@ -93,49 +93,48 @@ const HomeScreen = () => {
 
   if (isLoading) return <Text>Loading...</Text>;
   return (
-    <View>
+   <View style={styles.container}>
       <MapView
-        style={[styles.map, { height: mapHeight }]}
-        initialRegion={{
-          latitude: userPosition.lat,
-          latitudeDelta: 0.005,
-          longitude: userPosition.lon,
-          longitudeDelta: 0.008,
-        }}
-      >
-        {showLocation()}
-      </MapView>
-      {!selectedEventIsLoading ? (
-        <SectionList
-          ListHeaderComponent={
-            <>
-              <View>
-                <Text>Selected Event:</Text>
-              </View>
-            </>
-          }
-          sections={[
-            {
-              title: "",
-              data: [selectedEvent],
-            },
-          ]}
-          keyExtractor={(item) => item._id}
-          renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => handleCardPress(item)}>
-              <Text>{item.event_name}</Text>
-              <Text>Hosted by {item.first_name}</Text>
-              <Text>
-                {formatDate(item.event_date)}, {item.event_city}
-              </Text>
-              <Text>{item.event_description}</Text>
-            </TouchableOpacity>
-          )}
-        />
-      ) : (
-        <Text style={styles.selectAnEventPrompt}>
-          Please select an event on the map
-        </Text>
+   style={[styles.map, { height: mapHeight }]}
+  initialRegion={
+    {
+      latitude: userPosition.lat,
+      latitudeDelta: 0.005,
+      longitude: userPosition.lon,
+      longitudeDelta: 0.008,
+    }
+  }
+  >
+  {showLocation()}
+
+
+    </MapView >
+    {!selectedEventIsLoading ? (
+        <SectionList 
+      // ListHeaderComponent={
+      //   <>
+      //     <View>
+      //       <Text style={styles.largeText}>Selected Event:</Text>
+      //     </View> 
+      //   </>
+      // }
+      sections={[
+        {
+          title: "",
+          data: [selectedEvent ]
+        },
+      ]}
+      keyExtractor={( item) => item._id}
+      renderItem={({ item }) => (
+        <TouchableOpacity
+        onPress={() => handleCardPress(item)}
+        style={styles.card}
+        >          
+          <Text style={styles.eventNameText}>{item.event_name}</Text>
+          <Text style={styles.cardText}>Hosted by {item.first_name}</Text>
+          <Text style={styles.dateText}>{formatDate(item.event_date)}, {item.event_city}</Text>
+          <Text style={styles.descriptionText}>{item.event_description}</Text>
+        </TouchableOpacity>
       )}
     </View>
   );
@@ -146,6 +145,40 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "white",
+  },
+  card: {
+    backgroundColor: "#5daa80",
+  },
+    cardText: {
+      paddingLeft: 20,
+      fontSize: 16,
+      fontFamily: "Jost_400Regular",
+      color: "white",
+  },
+  dateText: {
+    paddingLeft: 20,
+    fontSize: 16,
+      fontFamily: "Jost_400Regular",
+      color: "white",
+      marginBottom: '5%'
+  },
+  descriptionText: {
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    fontSize: 16,
+    fontFamily: "Jost_400Regular",
+      backgroundColor: "white",
+      color: "black"
+  },
+  eventNameText: {
+    paddingLeft: 20,
+    fontSize: 25,
+    alignItems: "flex-start",
+    justifyContent: "center",
+      fontFamily: "Jost_600SemiBold",
+      marginVertical: "3%",
+      color: "white"
   },
   map: {
     width: "100%",
@@ -162,6 +195,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   selectAnEventPrompt: {
-    height: "10%",
-  },
+    height: "15%",
+    fontSize: 18,
+    backgroundColor: "#5daa80",
+    color: "white",
+    fontFamily: "Jost_400Regular"
+  }
 });
