@@ -17,16 +17,21 @@ const SingleEventScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { item } = route.params;
-  const [eventData, setEventData] = useState(JSON.parse(JSON.stringify(item)));
-  console.log(eventData);
+  const [eventData, setEventData] = useState(null);
   const [recipe, setRecipe] = useState(null);
   const [isRecipeLoading, setIsRecipeLoading] = useState(true);
   const [isAttendingLoading, setIsAttendingLoading] = useState(true);
+  const [isEventLoading, setIsEventLoading] = useState(true);
   const [isAttending, setIsAttending] = useState(null);
   const [attendClicked, setAttendClicked] = useState(false);
   const [cancelClicked, setCancelClicked] = useState(false);
   const [portionIcons, setPortionsIcons] = useState([]);
   const [portions, setPortions] = useState(1);
+
+  useEffect(() => {
+    setEventData(JSON.parse(JSON.stringify(item)));
+    setIsEventLoading(false);
+  }, [route.params]);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -42,25 +47,29 @@ const SingleEventScreen = () => {
         console.log(err);
       }
     };
-    setIsRecipeLoading(true);
-    fetchRecipe();
-  }, [setRecipe]);
+    if (!isEventLoading) {
+      setIsRecipeLoading(true);
+      fetchRecipe();
+    }
+  }, [setRecipe, eventData]);
 
   useEffect(() => {
-    const findUser = eventData.attendees.find((attendee) => {
-      return attendee.user_id === user._id;
-    });
-    if (findUser !== undefined) {
-      setIsAttending(true);
-      setIsAttendingLoading(false);
-    } else if (user._id === eventData.user_id) {
-      setIsAttending(true);
-      setIsAttendingLoading(false);
-    } else {
-      setIsAttending(false);
-      setIsAttendingLoading(false);
+    if (!isEventLoading) {
+      const findUser = eventData.attendees.find((attendee) => {
+        return attendee.user_id === user._id;
+      });
+      if (findUser !== undefined) {
+        setIsAttending(true);
+        setIsAttendingLoading(false);
+      } else if (user._id === eventData.user_id) {
+        setIsAttending(true);
+        setIsAttendingLoading(false);
+      } else {
+        setIsAttending(false);
+        setIsAttendingLoading(false);
+      }
     }
-  }, []);
+  }, [eventData]);
 
   useEffect(() => {
     const renderIcons = () => {
@@ -89,8 +98,10 @@ const SingleEventScreen = () => {
         </View>
       ));
     };
-    setPortionsIcons(renderIcons);
-  }, [eventData, isAttending]);
+    if (!isEventLoading) {
+      setPortionsIcons(renderIcons);
+    }
+  }, [eventData, isAttending, item]);
 
   useEffect(() => {
     const addAttending = async () => {
@@ -153,8 +164,9 @@ const SingleEventScreen = () => {
     navigation.navigate("Recipe Screen", { item });
   };
 
-  const handleUserPress = (eventData) => {
-    navigation.navigate("Profile", { eventData });
+  const handleUserPress = () => {
+    const item = eventData.user_id;
+    navigation.navigate("Profile", { item });
   };
 
   const handleMinusPress = () => {
@@ -181,6 +193,8 @@ const SingleEventScreen = () => {
     setCancelClicked(true);
   };
 
+  if (isEventLoading) return <Text>Loading...</Text>;
+
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.container}>
@@ -200,7 +214,7 @@ const SingleEventScreen = () => {
             {eventData.user_name} is hosting!
           </Text>
           <TouchableOpacity
-            onPress={() => handleUserPress(eventData.user_id)}
+            onPress={handleUserPress}
             style={styles.viewProfile}
           >
             <Text style={styles.buttonText}>Check profile</Text>
@@ -314,12 +328,14 @@ const SingleEventScreen = () => {
                     You're going to this event!
                   </Text>
                   {eventData.user_id !== user._id && (
-                    <TouchableOpacity
-                      style={styles.cancelButton}
-                      onPress={handleCancelPress}
-                    >
-                      <Text style={styles.buttonTextWhite}>Cancel</Text>
-                    </TouchableOpacity>
+                    <View style={styles.cancelContainer}>
+                      <TouchableOpacity
+                        style={styles.cancelButton}
+                        onPress={handleCancelPress}
+                      >
+                        <Text style={styles.buttonTextWhite}>Cancel</Text>
+                      </TouchableOpacity>
+                    </View>
                   )}
                 </>
               )}
@@ -442,7 +458,6 @@ const styles = StyleSheet.create({
   addressText: {
     fontSize: 18,
     fontFamily: "Jost_400Regular",
-    // textAlign: "center",
     paddingHorizontal: 20,
     paddingTop: 5,
   },
@@ -489,7 +504,6 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingHorizontal: 20,
     justifyContent: "center",
-    alignItems: "center",
   },
 
   reservation: {
@@ -554,6 +568,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 30,
+  },
+
+  cancelContainer: {
+    width: "100%",
+    paddingHorizontal: 20,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
