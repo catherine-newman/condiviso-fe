@@ -18,11 +18,13 @@ import {getEvents} from "../utils/api";
 // ]
 
 const LocationMap = () => {
-  const { localEvents, setLocalEvents} = useContext(UserContext);
+  const { localEvents, setLocalEvents, userPosition} = useContext(UserContext);
+  console.log("user position :",userPosition)
   const [isLoading, setIsLoading] = useState(true);
 
 useEffect(() => {
-  getEvents().then((data) => {
+  getEvents(null, null, null, userPosition.lon, userPosition.lat, 0.3, "k", null).then((data) => {
+  
     setLocalEvents(data.events);
     setIsLoading(false);
   })
@@ -52,9 +54,9 @@ style={styles.map}
 initialRegion={
   {
     latitude:53.4808,
-    latitudeDelta: 14.563453559494604,
+    latitudeDelta: 0.005,
     longitude: 2.2426,
-    longitudeDelta: 12.052001999999986,
+    longitudeDelta: 0.008,
   }
 }
 >
