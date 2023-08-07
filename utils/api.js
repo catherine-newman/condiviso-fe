@@ -31,6 +31,11 @@ const getRecipes = async (user_id) => {
     return res.data;
 }
 
+const getRecipe = async (recipe_id) => {
+    const res = await condivisoApi.get(`/recipes/${recipe_id}`)
+    return res.data;
+}
+
 const getEvents = async (user_id, from_date, to_date, lon, lat, dist, unit, spaces) => {
     const params = {};
     if (user_id) params.user_id = user_id;
@@ -90,4 +95,5 @@ module.exports = {
     getCoordinates,
     getFuzzyCoordinatesFromCoordinate,
     getRecipes,
+    getRecipe,
 }
