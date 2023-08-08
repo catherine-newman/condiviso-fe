@@ -4,7 +4,6 @@ import {
   StyleSheet,
   SectionList,
   TouchableOpacity,
-  Image,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { useEffect, useContext, useState } from "react";
@@ -21,14 +20,25 @@ const HomeScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedEventIsLoading, setSelectedEventIsLoading] = useState(true);
   const [mapEvents, setMapEvents] = useState([]);
-  const [selectedEventCard, setSelectedEventCard] = useState();
+  const [currentRegion, setCurrentRegion] = useState(null);
 
   useEffect(() => {
-    if (userPosition.lat !== null && userPosition.lon !== null) {
+    if (currentRegion) {
+      getEvents(null, null, null, currentRegion.longitude, currentRegion.latitude)
+      .then((data) => {
+        if (data && data.events) {
+          setMapEvents(data.events);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching events:", error);
+      })
+    } else if (userPosition.lat !== null && userPosition.lon !== null) {
       getEvents(null, null, null, userPosition.lon, userPosition.lat)
         .then((data) => {
           if (data && data.events) {
             setMapEvents(data.events);
+
           }
         })
         .catch((error) => {
@@ -38,7 +48,7 @@ const HomeScreen = () => {
           setIsLoading(false);
         });
     }
-  }, [userPosition]);
+  }, [userPosition, currentRegion]);
 
   useEffect(() => {
     const getLocation = async () => {
@@ -80,6 +90,7 @@ const HomeScreen = () => {
       );
     });
   };
+  
   const handleMarkerPress = (event) => {
     setSelectedEvent(event);
     setSelectedEventIsLoading(false);
@@ -88,6 +99,10 @@ const HomeScreen = () => {
   const handleCardPress = (item) => {
     navigation.navigate("Event Screen", { item });
   };
+
+  const handleRegionChangeComplete = (region) => {
+    setCurrentRegion(region);
+  }
 
   const mapHeight = selectedEventIsLoading ? "90%" : "60%";
 
@@ -104,6 +119,7 @@ const HomeScreen = () => {
       longitudeDelta: 0.008,
     }
   }
+  onRegionChangeComplete={handleRegionChangeComplete}
   >
   {showLocation()}
 
