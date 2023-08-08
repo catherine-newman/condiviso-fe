@@ -84,8 +84,10 @@ const HomeScreen = () => {
             longitude: event.coordinate_fuzzy.coordinates[0],
           }}
           title={event.event_name}
+          image={require('../styles/markers/marker6.png')}
           description={event.event_description}
           onPress={() => handleMarkerPress(event)}
+
         />
       );
     });

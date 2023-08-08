@@ -40,7 +40,6 @@ if(isLoading) return <Text>Loading... </Text>
         coordinate={{"latitude": event.coordinate_fuzzy.coordinates[1], "longitude": event.coordinate_fuzzy.coordinates[0]}}
         title={event.event_name}
         description={event.event_description}
-       
         />
       )
     })
