@@ -33,6 +33,7 @@ const ProfileScreen = () => {
         console.log(err);
       }
     };
+    setUserLoading(true);
     if (route.params !== undefined) {
       const { item } = route.params;
       setProfileId(item);
@@ -48,7 +49,7 @@ const ProfileScreen = () => {
       });
       setUserLoading(false);
     }
-  }, []);
+  }, [route.params]);
 
   useEffect(() => {
     const fetchProfileData = async (id) => {
@@ -70,8 +71,25 @@ const ProfileScreen = () => {
           return newRecipe;
         });
         data.push({ title: "My Recipes", data: newRecipes });
-        const eventsRes = await getEvents(id);
-        data.push({ title: "Hosting Events", data: eventsRes.events });
+        const eventsHostingRes = await getEvents(id);
+        data.push({ title: "Hosting Events", data: eventsHostingRes.events });
+        if (route.params === undefined) {
+          const eventsAttendingRes = await getEvents(
+            id,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "true"
+          );
+          data.push({
+            title: "Attending Events",
+            data: eventsAttendingRes.events,
+          });
+        }
         setProfileData(data);
         setProfileLoading(false);
       } catch (err) {
@@ -92,6 +110,14 @@ const ProfileScreen = () => {
   if (profileLoading || userLoading)
     return <View style={styles.container}></View>;
 
+  const renderSeparator = () => {
+    return (
+      <View style={styles.lineContainer}>
+        <View style={styles.line} />
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <SectionList
@@ -108,6 +134,8 @@ const ProfileScreen = () => {
         }
         sections={profileData}
         keyExtractor={(item, index) => item + index}
+        ItemSeparatorComponent={renderSeparator}
+        stickySectionHeadersEnabled={false}
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => handlePress(item)}
@@ -196,6 +224,7 @@ const styles = StyleSheet.create({
     alignItems: "start",
     width: "100%",
     paddingHorizontal: 20,
+    paddingVertical: 15,
   },
 
   recipeListItem: {
@@ -204,6 +233,7 @@ const styles = StyleSheet.create({
     gap: 20,
     width: "100%",
     paddingHorizontal: 20,
+    paddingVertical: 15,
   },
 
   listItemName: {
@@ -214,13 +244,29 @@ const styles = StyleSheet.create({
   },
 
   eventDate: {
-    fontSize: 18,
+    fontSize: 15,
     fontFamily: "Jost_600SemiBold",
   },
 
   eventPortions: {
     fontSize: 18,
     fontFamily: "Jost_400Regular",
+  },
+
+  lineContainer: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+  },
+
+  line: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#eaeaea",
+    width: "90%",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
   },
 });
 

@@ -36,7 +36,7 @@ const getRecipe = async (recipe_id) => {
     return res.data;
 }
 
-const getEvents = async (user_id, from_date, to_date, lon, lat, dist, unit, spaces) => {
+const getEvents = async (user_id, from_date, to_date, lon, lat, dist, unit, spaces, attending) => {
     const params = {};
     if (user_id) params.user_id = user_id;
     if (from_date) params.from_date = from_date;
@@ -46,6 +46,7 @@ const getEvents = async (user_id, from_date, to_date, lon, lat, dist, unit, spac
     if (dist) params.dist = dist;
     if (unit) params.unit = unit;
     if (spaces) params.spaces = spaces;
+    if (attending) params.attending = attending;
     const res = await condivisoApi.get(`/events`, {
         params: params
     });
