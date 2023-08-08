@@ -49,7 +49,7 @@ const HomeScreen = () => {
           setIsLoading(false);
         });
     }
-  }, [userPosition, currentRegion]);
+  }, [userPosition, currentRegion, hideFullEvents]);
 
   useEffect(() => {
     const getLocation = async () => {
@@ -108,21 +108,28 @@ const HomeScreen = () => {
   }
 
   const toggleHideFullEvents = () => {
-    setHideFullEvents((prevHideFullEvents) => !prevHideFullEvents);
+    setHideFullEvents(!hideFullEvents);
   };
 
   const mapHeight = selectedEventIsLoading ? "90%" : "60%";
 
+  const Checkbox = ({ label, checked, onChange }) => {
+    return (
+      <TouchableOpacity style={styles.checkboxContainer} onPress={onChange}>
+        {checked ? (
+          <View style={[styles.checkbox, styles.checkedBox]} />
+        ) : (
+          <View style={styles.checkbox} />
+        )}
+        <Text style={styles.label}>{label}</Text>
+      </TouchableOpacity>
+    );
+  };
+
   if (isLoading) return <Text>Loading...</Text>
   return (
    <View style={styles.container}>
-    <View style={styles.checkboxContainer}>
-    <CheckBox
-      value={hideFullEvents}
-      onValueChange={toggleHideFullEvents}
-    />
-    <Text>Hide Full Events</Text>
-  </View>
+    <Checkbox label="Hide full events" checked={hideFullEvents} onChange={toggleHideFullEvents} />
       <MapView
    style={[styles.map, { height: mapHeight }]}
   initialRegion={
@@ -234,5 +241,30 @@ const styles = StyleSheet.create({
     backgroundColor: "#5daa80",
     color: "white",
     fontFamily: "Jost_400Regular"
-  }
+  },
+
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 10,
+    backgroundColor: "#5daa80",
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: "white",
+    marginRight: 8,
+  },
+  checkedBox: {
+    backgroundColor: "#F1C046",
+    borderColor: "white",
+  },
+  label: {
+    fontSize: 18,
+    color: "white",
+    fontFamily: "Jost_400Regular"
+  },
 });
