@@ -33,6 +33,7 @@ export default function CalendarScreen() {
               event_name: event.event_name,
               event_city: event.event_city,
               event_description: eventDescription,
+              eventInfo: event
             };
             if (sectionData.length === 0) {
               sectionData.push({ title: formattedDate, data: [data] });
@@ -70,7 +71,7 @@ export default function CalendarScreen() {
     return (
       <>
       <TouchableOpacity
-      onPress={() => navigateToEventScreen(item)}>
+      onPress={() => navigateToEventScreen(item.eventInfo)}>
        <View style={styles.eventCard}>
       <Text style={styles.eventName}>{item.event_name}</Text>
       <Text style={styles.eventCity}>{item.event_city}</Text>
