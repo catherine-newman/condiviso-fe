@@ -127,19 +127,6 @@ const HomeScreen = () => {
     );
   };
 
-  const Checkbox = ({ label, checked, onChange }) => {
-    return (
-      <TouchableOpacity style={styles.checkboxContainer} onPress={onChange}>
-        {checked ? (
-          <View style={[styles.checkbox, styles.checkedBox]} />
-        ) : (
-          <View style={styles.checkbox} />
-        )}
-        <Text style={styles.label}>{label}</Text>
-      </TouchableOpacity>
-    );
-  };
-
   if (isLoading) return <Text>Loading...</Text>
   return (
    <View style={styles.container}>
