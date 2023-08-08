@@ -21,10 +21,11 @@ const HomeScreen = () => {
   const [selectedEventIsLoading, setSelectedEventIsLoading] = useState(true);
   const [mapEvents, setMapEvents] = useState([]);
   const [currentRegion, setCurrentRegion] = useState(null);
+  const [hideFullEvents, setHideFullEvents] = useState(false);
 
   useEffect(() => {
     if (currentRegion) {
-      getEvents(null, null, null, currentRegion.longitude, currentRegion.latitude)
+      getEvents(null, null, null, currentRegion.longitude, currentRegion.latitude, null, null, hideFullEvents)
       .then((data) => {
         if (data && data.events) {
           setMapEvents(data.events);
@@ -106,11 +107,22 @@ const HomeScreen = () => {
     setCurrentRegion(region);
   }
 
+  const toggleHideFullEvents = () => {
+    setHideFullEvents((prevHideFullEvents) => !prevHideFullEvents);
+  };
+
   const mapHeight = selectedEventIsLoading ? "90%" : "60%";
 
   if (isLoading) return <Text>Loading...</Text>
   return (
    <View style={styles.container}>
+    <View style={styles.checkboxContainer}>
+    <CheckBox
+      value={hideFullEvents}
+      onValueChange={toggleHideFullEvents}
+    />
+    <Text>Hide Full Events</Text>
+  </View>
       <MapView
    style={[styles.map, { height: mapHeight }]}
   initialRegion={
