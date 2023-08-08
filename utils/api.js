@@ -81,6 +81,75 @@ const getFuzzyCoordinatesFromCoordinate = async (lon, lat) => {
     }
 };
 
+const postEvent = async (
+    _id,
+    event_name,
+    first_name,
+    last_name,
+    user_name,
+    user_id,
+    email,
+    event_date,
+    event_location,
+    postcode,
+    latitude,
+    longitude,
+    latitude_fuzzy,
+    longitude_fuzzy,
+    event_city,
+    event_description,
+    event_duration,
+    max_attendees,
+    attendees,
+    recipes) => {
+
+        const postEventBody = {
+            _id,
+            event_name,
+            first_name,
+            last_name,
+            user_name,
+            user_id,
+            email,
+            event_date,
+            event_location,
+            postcode,
+            latitude,
+            longitude,
+            latitude_fuzzy,
+            longitude_fuzzy,
+            event_city,
+            event_description,
+            event_duration,
+            max_attendees,
+            attendees,
+            recipes
+          }
+            try {
+        const result = await condivisoApi.post('/events',
+            postEventBody
+        );
+        return [result.data];
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+   const postRecipe = async (_id, user_id, recipe_name, recipe_ingredients, recipe_content, recipe_image ) => {
+ console.log('here')
+const postRecipeBody = {_id, user_id, recipe_name, recipe_ingredients, recipe_content, recipe_image 
+
+}
+try {const result = await condivisoApi.post('/recipes',
+    postRecipeBody
+);
+return [result.data];
+} catch (err) {
+console.log(err);
+}
+}
+   
+
 
 
 module.exports = {
@@ -90,4 +159,6 @@ module.exports = {
     getCoordinates,
     getFuzzyCoordinatesFromCoordinate,
     getRecipes,
+    postEvent,
+    postRecipe
 }
