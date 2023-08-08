@@ -16,9 +16,10 @@ export default function CalendarScreen() {
   const [calendarEvents, setCalendarEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [markedDates, setMarkedDates] = useState({});
+  const [hideFullEvents, setHideFullEvents] = useState(false);
 
   useEffect(() => {
-    getEvents(null, null, null, userPosition.lon, userPosition.lat)
+    getEvents(null, null, null, userPosition.lon, userPosition.lat, null, null, hideFullEvents)
       .then((data) => {
         if (data && data.events) {
           const sectionData = [];
@@ -61,7 +62,24 @@ export default function CalendarScreen() {
       .catch((error) => {
         console.error("Error fetching events:", error);
       });
-  }, []);
+  }, [hideFullEvents]);
+
+  const toggleHideFullEvents = () => {
+    setHideFullEvents(!hideFullEvents);
+  };
+
+  const Checkbox = ({ label, checked, onChange }) => {
+    return (
+      <TouchableOpacity style={styles.checkboxContainer} onPress={onChange}>
+        {checked ? (
+          <View style={[styles.checkbox, styles.checkedBox]} />
+        ) : (
+          <View style={styles.checkbox} />
+        )}
+        <Text style={styles.label}>{label}</Text>
+      </TouchableOpacity>
+    );
+  };
 
   const renderItem = useCallback(({ item }) => {
     const navigation = useNavigation();
@@ -83,6 +101,7 @@ export default function CalendarScreen() {
   }, []);
   return (
     <View style={styles.container}>
+      <Checkbox label="Hide full events" checked={hideFullEvents} onChange={toggleHideFullEvents} />
       <CalendarProvider date={new Date()} showTodayButton>
         <ExpandableCalendar
           initialPosition={ExpandableCalendar.positions.OPEN}
@@ -128,6 +147,31 @@ const styles = StyleSheet.create({
     backgroundColor: "#00adf5", 
     borderRadius: 8,
     marginBottom: 16, 
+  },
+
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 10,
+    backgroundColor: "#5daa80",
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: "white",
+    marginRight: 8,
+  },
+  checkedBox: {
+    backgroundColor: "#F1C046",
+    borderColor: "white",
+  },
+  label: {
+    fontSize: 18,
+    color: "white",
+    fontFamily: "Jost_400Regular"
   },
 });
 
