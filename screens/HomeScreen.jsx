@@ -21,10 +21,11 @@ const HomeScreen = () => {
   const [selectedEventIsLoading, setSelectedEventIsLoading] = useState(true);
   const [mapEvents, setMapEvents] = useState([]);
   const [currentRegion, setCurrentRegion] = useState(null);
+  const [hideFullEvents, setHideFullEvents] = useState(false);
 
   useEffect(() => {
     if (currentRegion) {
-      getEvents(null, null, null, currentRegion.longitude, currentRegion.latitude)
+      getEvents(null, null, null, currentRegion.longitude, currentRegion.latitude, null, null, hideFullEvents)
       .then((data) => {
         if (data && data.events) {
           setMapEvents(data.events);
@@ -48,7 +49,7 @@ const HomeScreen = () => {
           setIsLoading(false);
         });
     }
-  }, [userPosition, currentRegion]);
+  }, [userPosition, currentRegion, hideFullEvents]);
 
   useEffect(() => {
     const getLocation = async () => {
@@ -106,11 +107,29 @@ const HomeScreen = () => {
     setCurrentRegion(region);
   }
 
+  const toggleHideFullEvents = () => {
+    setHideFullEvents(!hideFullEvents);
+  };
+
   const mapHeight = selectedEventIsLoading ? "90%" : "60%";
+
+  const Checkbox = ({ label, checked, onChange }) => {
+    return (
+      <TouchableOpacity style={styles.checkboxContainer} onPress={onChange}>
+        {checked ? (
+          <View style={[styles.checkbox, styles.checkedBox]} />
+        ) : (
+          <View style={styles.checkbox} />
+        )}
+        <Text style={styles.label}>{label}</Text>
+      </TouchableOpacity>
+    );
+  };
 
   if (isLoading) return <Text>Loading...</Text>
   return (
    <View style={styles.container}>
+    <Checkbox label="Hide full events" checked={hideFullEvents} onChange={toggleHideFullEvents} />
       <MapView
    style={[styles.map, { height: mapHeight }]}
   initialRegion={
@@ -222,5 +241,30 @@ const styles = StyleSheet.create({
     backgroundColor: "#5daa80",
     color: "white",
     fontFamily: "Jost_400Regular"
-  }
+  },
+
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 10,
+    backgroundColor: "#5daa80",
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: "white",
+    marginRight: 8,
+  },
+  checkedBox: {
+    backgroundColor: "#F1C046",
+    borderColor: "white",
+  },
+  label: {
+    fontSize: 18,
+    color: "white",
+    fontFamily: "Jost_400Regular"
+  },
 });
