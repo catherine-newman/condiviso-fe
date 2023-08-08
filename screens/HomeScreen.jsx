@@ -91,7 +91,7 @@ const HomeScreen = () => {
 
   const mapHeight = selectedEventIsLoading ? "90%" : "60%";
 
-  if (isLoading) return <Text>Loading...</Text>;
+  if (isLoading) return <Text>Loading...</Text>
   return (
    <View style={styles.container}>
       <MapView
@@ -135,6 +135,10 @@ const HomeScreen = () => {
           <Text style={styles.dateText}>{formatDate(item.event_date)}, {item.event_city}</Text>
           <Text style={styles.descriptionText}>{item.event_description}</Text>
         </TouchableOpacity>
+      )}
+      />
+      ) : (
+        <Text style={styles.selectAnEventPrompt}>Please select an event on the map</Text>
       )}
     </View>
   );
