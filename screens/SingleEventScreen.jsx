@@ -1,4 +1,11 @@
-import { Text, StyleSheet, View, Image, TouchableOpacity } from "react-native";
+import {
+  Text,
+  StyleSheet,
+  View,
+  Image,
+  TouchableOpacity,
+  Linking,
+} from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { formatDate } from "../utils/formatDate";
 import { useState, useEffect, useContext } from "react";
@@ -193,6 +200,17 @@ const SingleEventScreen = () => {
     setCancelClicked(true);
   };
 
+  const handleDirectionsPress = () => {
+    const latitude = eventData.coordinate.coordinates[1];
+    const longitude = eventData.coordinate.coordinates[0];
+    const label = eventData.event_name;
+
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}&travelmode=driving&dir_action=navigate&destination_place_id=${label}`;
+    Linking.openURL(url).catch((err) =>
+      console.error("Error opening map app:", err)
+    );
+  };
+
   if (isEventLoading) return <Text>Loading...</Text>;
 
   return (
@@ -278,6 +296,14 @@ const SingleEventScreen = () => {
               {"\n"}
               {eventData.postcode}
             </Text>
+            <View style={styles.directionsContainer}>
+              <TouchableOpacity
+                style={styles.directionsButton}
+                onPress={handleDirectionsPress}
+              >
+                <Text style={styles.buttonTextWhite}>Get directions</Text>
+              </TouchableOpacity>
+            </View>
           </>
         )}
         {!isAttendingLoading && (
@@ -575,6 +601,23 @@ const styles = StyleSheet.create({
   cancelContainer: {
     width: "100%",
     paddingHorizontal: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  directionsButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#F4783C",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+  },
+
+  directionsContainer: {
+    width: "100%",
+    paddingHorizontal: 20,
+    paddingTop: 10,
     justifyContent: "center",
     alignItems: "center",
   },
