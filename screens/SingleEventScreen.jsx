@@ -252,6 +252,8 @@ const SingleEventScreen = () => {
                 latitude: eventData.coordinate_fuzzy.coordinates[1],
                 longitude: eventData.coordinate_fuzzy.coordinates[0],
               }}
+              image={require('../styles/markers/marker6.png')}
+
             />
           )}
           {isAttending && (
