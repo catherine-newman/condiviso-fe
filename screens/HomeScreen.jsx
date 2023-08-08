@@ -111,7 +111,7 @@ const HomeScreen = () => {
     setHideFullEvents(!hideFullEvents);
   };
 
-  const mapHeight = selectedEventIsLoading ? "90%" : "60%";
+  const mapHeight = selectedEventIsLoading ? "80%" : "60%";
 
   const Checkbox = ({ label, checked, onChange }) => {
     return (
@@ -148,13 +148,6 @@ const HomeScreen = () => {
     </MapView >
     {!selectedEventIsLoading ? (
         <SectionList 
-      // ListHeaderComponent={
-      //   <>
-      //     <View>
-      //       <Text style={styles.largeText}>Selected Event:</Text>
-      //     </View> 
-      //   </>
-      // }
       sections={[
         {
           title: "",
@@ -175,7 +168,9 @@ const HomeScreen = () => {
       )}
       />
       ) : (
-        <Text style={styles.selectAnEventPrompt}>Please select an event on the map</Text>
+        <View style={styles.selectAnEventPromptContainer}>
+        <Text style={styles.selectAnEventPromptText}>Please select an event on the map</Text>
+        </View>
       )}
     </View>
   );
@@ -235,12 +230,17 @@ const styles = StyleSheet.create({
     width: "50%",
     textAlign: "center",
   },
-  selectAnEventPrompt: {
-    height: "15%",
-    fontSize: 18,
+  selectAnEventPromptContainer: {
+    height: "10%",
     backgroundColor: "#5daa80",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  selectAnEventPromptText: {
     color: "white",
-    fontFamily: "Jost_400Regular"
+    fontFamily: "Jost_400Regular",
+    fontSize: 20,
   },
 
   checkboxContainer: {
