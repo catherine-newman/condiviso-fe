@@ -7,6 +7,9 @@ import { useCallback, useContext, useState, useEffect } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { UserContext } from "../contexts/User";
 import { getEvents } from "../utils/api";
+import { TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+
 
 export default function CalendarScreen() {
   const { userPosition } = useContext(UserContext);
@@ -30,6 +33,7 @@ export default function CalendarScreen() {
               event_name: event.event_name,
               event_city: event.event_city,
               event_description: eventDescription,
+              eventInfo: event
             };
             if (sectionData.length === 0) {
               sectionData.push({ title: formattedDate, data: [data] });
@@ -60,13 +64,20 @@ export default function CalendarScreen() {
   }, []);
 
   const renderItem = useCallback(({ item }) => {
+    const navigation = useNavigation();
+    const navigateToEventScreen = (item) => {
+      navigation.navigate("Event Screen", { item })
+    }
     return (
       <>
+      <TouchableOpacity
+      onPress={() => navigateToEventScreen(item.eventInfo)}>
        <View style={styles.eventCard}>
       <Text style={styles.eventName}>{item.event_name}</Text>
       <Text style={styles.eventCity}>{item.event_city}</Text>
       <Text style={styles.eventDescription}>{item.event_description}</Text>
     </View>
+    </TouchableOpacity>
       </>
     );
   }, []);
