@@ -111,7 +111,21 @@ const HomeScreen = () => {
     setHideFullEvents(!hideFullEvents);
   };
 
+
   const mapHeight = selectedEventIsLoading ? "80%" : "60%";
+
+  const Checkbox = ({ label, checked, onChange }) => {
+    return (
+      <TouchableOpacity style={styles.checkboxContainer} onPress={onChange}>
+        {checked ? (
+          <View style={[styles.checkbox, styles.checkedBox]} />
+        ) : (
+          <View style={styles.checkbox} />
+        )}
+        <Text style={styles.label}>{label}</Text>
+      </TouchableOpacity>
+    );
+  };
 
   const Checkbox = ({ label, checked, onChange }) => {
     return (
@@ -241,6 +255,31 @@ const styles = StyleSheet.create({
     color: "white",
     fontFamily: "Jost_400Regular",
     fontSize: 20,
+  },
+
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 10,
+    backgroundColor: "#5daa80",
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: "white",
+    marginRight: 8,
+  },
+  checkedBox: {
+    backgroundColor: "#F1C046",
+    borderColor: "white",
+  },
+  label: {
+    fontSize: 18,
+    color: "white",
+    fontFamily: "Jost_400Regular"
   },
 
   checkboxContainer: {
