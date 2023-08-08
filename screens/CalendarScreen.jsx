@@ -62,9 +62,11 @@ export default function CalendarScreen() {
   const renderItem = useCallback(({ item }) => {
     return (
       <>
-        <Text>{item.event_name}</Text>
-        <Text>{item.event_city}</Text>
-        <Text>{item.event_description}</Text>
+       <View style={styles.eventCard}>
+      <Text style={styles.eventName}>{item.event_name}</Text>
+      <Text style={styles.eventCity}>{item.event_city}</Text>
+      <Text style={styles.eventDescription}>{item.event_description}</Text>
+    </View>
       </>
     );
   }, []);
@@ -76,6 +78,8 @@ export default function CalendarScreen() {
           firstDay={1}
           animateScroll
           markedDates={markedDates}
+          theme={customTheme}
+        
         />
         {isLoading && <Text>Loading...</Text>}
         {!isLoading && (
@@ -89,5 +93,47 @@ export default function CalendarScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#5daa80",
+  },
+  eventName: {
+    fontFamily: "Jost_400Regular",
+    fontSize: 25,
+    color: "#ffffff",
+  },
+  eventCity: {
+    fontFamily: "Jost_400Regular",
+    fontSize: 18,
+    color: "#ffffff",
+    marginBottom: 8, 
+  },
+  eventDescription: {
+    fontFamily: "Jost_400Regular",
+    fontSize: 16,
+    color: "#ffffff",
+    paddingLeft: 16, 
+  },
+  eventCard: {
+    padding: 16, 
+    backgroundColor: "#00adf5", 
+    borderRadius: 8,
+    marginBottom: 16, 
   },
 });
+
+const customTheme = {
+  backgroundColor: "#f5f6e2", 
+  calendarBackground: "#bad5ad", 
+  textSectionTitleColor: "#217074", 
+  selectedDayBackgroundColor: "#00adf5",
+  selectedDayTextColor: "#ffffff", 
+  todayTextColor: "#217074",
+  dayTextColor: "#2d4150", 
+  textDisabledColor: "#E7EAEF", 
+  dotColor: "#217074",
+  selectedDotColor: "#ffffff",
+  arrowColor: "#00adf5", 
+  monthTextColor: "#00adf5",
+};
+
+
+
