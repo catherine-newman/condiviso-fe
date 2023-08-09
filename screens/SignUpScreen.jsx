@@ -6,7 +6,6 @@ import {
     View,
     TextInput,
     TouchableOpacity,
-    Image,
     StyleSheet
 } from "react-native";
 import { TouchableHighlight } from "react-native-gesture-handler";
@@ -29,8 +28,8 @@ const SignUpScreen = ({ navigation }) => {
     const [showSignUpInput , setShowSignUpInput] = useState(false);
     const [username, setUsername] = useState("");
     const [enteredUsername, setEnteredUsername] = useState("");
-    const { setUser , user} =useContext(UserContext)
-console.log(user)
+    const { setUser } =useContext(UserContext)
+
     const handleEnterButtonPress = () => {
         setUsername(enteredUsername)
     }
@@ -48,13 +47,17 @@ console.log(user)
 
     useEffect(()=>{
         if(signUpClicked === true){
-            // console.log(newUsername,newFirstname,newLastname,newEmail,newAddress,newPostcode,newAboutMe)
-       postUser(newUsername,newFirstname,newLastname,newEmail,newAddress,newPostcode,newAboutMe)
+       postUser(newUsername, newFirstname, newLastname, newEmail, newAddress, newPostcode, newAboutMe)
        .then((data)=>{
         console.log(data);
-
         setSignUpClicked(false)
-        }) 
+        if (data.insertedId) {
+          return getSingleUser(data.insertedId)
+        }
+        })
+        .then((data) => {
+          setUser(data);
+        })
        .catch((err)=>{
         console.log(err)
        })}
