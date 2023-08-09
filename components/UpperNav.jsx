@@ -28,6 +28,8 @@ const UpperNav = () => {
     navigation.goBack();
   };
 
+  if (currentScreen === "Intro1" || currentScreen === "Intro2") return null;
+
   if (user) {
     return (
       <View

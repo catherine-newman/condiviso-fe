@@ -40,6 +40,8 @@ const LowerNav = () => {
     navigation.navigate("SignUpScreen");
   };
 
+  if (currentScreen === "Intro1" || currentScreen === "Intro2") return null;
+
   return (
     <View style={navStyles.lowerNavContainer}>
       <TouchableOpacity
