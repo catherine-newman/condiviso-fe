@@ -157,7 +157,7 @@ const ProfileScreen = () => {
                 <Text style={styles.eventDate}>
                   {formatDate(item.event_date)}, {item.event_city}
                 </Text>
-                <Text style={styles.listItemName}>{item.event_name}</Text>
+                <Text style={styles.recipeItemName}>{item.event_name}</Text>
                 {item.spaces_free === 1 && (
                   <Text style={styles.eventPortions}>
                     {item.spaces_free} portion left.
@@ -192,6 +192,10 @@ const styles = StyleSheet.create({
     gap: 20,
     backgroundColor: "#5daa80",
     padding: 20,
+    borderRadius: 8,
+    marginRight: 8,
+    marginLeft: 8,
+   
   },
 
   largeProfileText: {
@@ -222,9 +226,12 @@ const styles = StyleSheet.create({
 
   eventListItem: {
     alignItems: "start",
-    width: "100%",
     paddingHorizontal: 20,
     paddingVertical: 15,
+    backgroundColor: "#5daa80",
+    borderRadius: 8,
+  margin: 8,
+    
   },
 
   recipeListItem: {
@@ -234,6 +241,8 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingHorizontal: 20,
     paddingVertical: 15,
+    borderColor: "#5daa80"
+ 
   },
 
   listItemName: {
@@ -243,14 +252,23 @@ const styles = StyleSheet.create({
     width: "75%",
   },
 
+  recipeItemName: {
+color: "white",
+
+  },
+
   eventDate: {
     fontSize: 15,
     fontFamily: "Jost_600SemiBold",
+    color: "white",
+
   },
 
   eventPortions: {
     fontSize: 18,
     fontFamily: "Jost_400Regular",
+    color: "white",
+
   },
 
   lineContainer: {
@@ -261,7 +279,7 @@ const styles = StyleSheet.create({
   },
 
   line: {
-    borderBottomWidth: 1,
+    borderBottomWidth: 5,
     borderBottomColor: "#eaeaea",
     width: "90%",
     alignItems: "center",

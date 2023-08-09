@@ -123,7 +123,7 @@ export default function CalendarScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#5daa80",
+    backgroundColor: "white",
   },
   eventName: {
     fontFamily: "Jost_400Regular",
@@ -144,9 +144,13 @@ const styles = StyleSheet.create({
   },
   eventCard: {
     padding: 16, 
-    backgroundColor: "#00adf5", 
+    backgroundColor: "#5daa80", 
     borderRadius: 8,
-    marginBottom: 16, 
+    marginBottom: 8, 
+    marginTop: 8,
+    marginRight: 8,
+
+    marginLeft:8
   },
 
   checkboxContainer: {
@@ -173,21 +177,25 @@ const styles = StyleSheet.create({
     color: "white",
     fontFamily: "Jost_400Regular"
   },
+  todayButton: {
+    backgroundColor: "white",
+    color: "green"
+  }
 });
 
 const customTheme = {
-  backgroundColor: "#f5f6e2", 
-  calendarBackground: "#bad5ad", 
+  backgroundColor: "white", 
+  calendarBackground: "white", 
   textSectionTitleColor: "#217074", 
-  selectedDayBackgroundColor: "#00adf5",
+  selectedDayBackgroundColor: "#065906",
   selectedDayTextColor: "#ffffff", 
-  todayTextColor: "#217074",
-  dayTextColor: "#2d4150", 
+  todayTextColor: "#002A00",
+  dayTextColor: "#004400", 
   textDisabledColor: "#E7EAEF", 
   dotColor: "#217074",
-  selectedDotColor: "#ffffff",
-  arrowColor: "#00adf5", 
-  monthTextColor: "#00adf5",
+  selectedDotColor: "white",
+  arrowColor: "#002A00", 
+  monthTextColor: "#002A00",
 };
 
 
