@@ -1,14 +1,21 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, StyleSheet, TextInput, ScrollView, SafeAreaView, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
-import { Formik } from 'formik';
+import { View, Text, StyleSheet, TextInput, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
 import { UserContext } from '../contexts/User';
-import { postEvent } from '../utils/api';
+import { postEvent, postRecipe } from '../utils/api';
 
-const AddEventScreen = () => {
+const AddEventcreen = () => {
   const { user } = useContext(UserContext);
   const [numOfGuests, setNumOfGuests] = useState(1);
-
-  const initialValues = {
+    const [recipes, setRecipes] = useState([{
+       _id: '',
+      user_id: 'user.user_id',
+      recipe_name: '',
+      recipe_ingredients: '',
+      recipe_content: '',
+      recipe_image: '',
+  }] )
+  
+  const [event, setEvent] = useState({
     _id: '',
     event_name: '',
     first_name: 'user.first_name',
@@ -28,86 +35,115 @@ const AddEventScreen = () => {
     event_duration: '',
     max_attendees: '',
     attendees: '',
-    recipes: [
+    recipes:[]})
+ 
+
+
+  const handleAddRecipe = () => {
+    setRecipes([
+      ...recipes,
       {
-        _id:'',
+        _id: '',
         user_id: 'user.user_id',
         recipe_name: '',
         recipe_ingredients: '',
         recipe_content: '',
-        recipe_image: ''
-   } ]}
- 
-  // const handleAutofill = (autofillValue) => {
-  //   autofillValue('event_location', user.address);
-  // };
+        recipe_ingredients_content: '',
+        recipe_image: '',
+      },
+    ]);
+  };
 
+
+
+  const handleDeleteRecipe = (index) => {
+    console.log('here')
+    const updatedList = [...recipes]
+    updatedList.splice(index, 1)
+    setRecipes(updatedList)
+    console.log(updatedList)
+  };
+
+  
   const handleSubmit = (values) => {
     postEvent(values, user)
       .then((postedEvent) => {
-        console.log(postedEvent);
+             const eventId = postedEvent._id;
+
+        
+        const recipePromises = values.recipes.map((recipe) =>
+          postRecipe(eventId,recipe, user_id)
+        );
+
+         Promise.all(recipePromises)
+          .then((postedRecipes) => {
+            console.log( postedRecipes);
+          })
+          .catch((error) => {
+            console.error( error);
+          });
       })
       .catch((error) => {
-        console.error(error);
+        console.error( error);
       });
   };
+ 
+ 
+   
 
+  
   return (
-    <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-      {({ handleChange, handleSubmit, values, autofillValue }) => (
-        <SafeAreaView style={styles.container}>
-             <KeyboardAvoidingView behavior="padding" style={styles.container}>
-          <ScrollView style={styles.scrollView}>
-       
-              {/* <TouchableOpacity style={styles.autofillButton} onPress={() => handleAutofill(autofillValue)}>
-                <Text style={styles.autofillButtonText}>Autofill my user details</Text>
-              </TouchableOpacity> */}
+
+      <SafeAreaView style={styles.container}>
+                       <ScrollView style={styles.scrollView}>
+  
                <View style={styles.eventHeader}>
 <Text style={styles.header}>create event</Text>
 </View>
-
-<View style={styles.eventContainer}>
+ <View style={styles.eventContainer}> 
 <View style={styles.event}>
               <TextInput
                 style={styles.input}
                 maxLength={60}
                 placeholder="Event Name"
-                value={values.event_name}
-                onChangeText={handleChange('event_name')}
+                value={event.event_name}
+                onChangeText={(name) =>
+                  setEvent({ ...event, event_name: name })
+                }
               />
               
               <TextInput
                 style={styles.input}
-                placeholder="Event date (DD-MM-YYY)"
-                value={values.event_date}
-                onChangeText={handleChange('event_date')}
-                keyboardType="numeric"
-              />
-               {/* <TextInput
-                style={styles.input}
-                placeholder="Event location"
-                value={values.event_location}
-                onChangeText={handleChange('event_location')}
-              /> */}
-
-              <TextInput
-                style={styles.input}
-                placeholder="Event City"
-                value={values.event_city}
-                onChangeText={handleChange('event_city')}
+                placeholder="Event date and start time (e.g.1 Aug 12:30)"
+                value={event.event_date}
+                onChangeText={(date) =>
+                  setEvent({ ...event, event_date: date })
+                }
+                
+                  // onBlur={() => {
+                  //   const formattedDate = formatDate(values.event_date);
+                  //   if (!formattedDate) {
+                  //     alert('Please enter a valid date and time.');
+                  //   }
+                  // }}
+                
               />
               <TextInput
                 style={[styles.input, styles.textArea]}
                 placeholder="Event description"
-                value={values.event_description}
-                onChangeText={handleChange('event_description')}
+                value={event.event_description}
+                onChangeText={(description) =>
+                  setEvent({ ...event, event_description: description })
+                }
                 multiline
               />
               <TextInput
                 style={styles.input}
                 placeholder="Event duration (e.g. 4 hours)"
-                value={values.event_duration}
-                onChangeText={handleChange('event_duration')}
+                value={event.event_duration}
+                onChangeText={(duration) =>
+                  setEvent({ ...event, event_duration: duration })
+                }
               />
               <View style={styles.counterContainer}>
                 <Text style={styles.label}>Max number of guests</Text>
@@ -128,81 +164,90 @@ const AddEventScreen = () => {
                 </View>
               </View>
               </View>
-              </View>
-           
-              {values.recipes.map((recipe, index) => (
-                        <View key={index}style={styles.recipe}>
-                           <View style={styles.recipeContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder={`Recipe Name`}
-                value={recipe.recipe_name}
-                onChangeText={(text) => handleChange(`recipes[${index}].recipe_name`)(text)}
-              />
-               <TextInput
-                style={styles.input}
-                placeholder={`Recipe Ingredients`}
-                value={recipe.recipe_ingredients}
-                onChangeText={(text) => handleChange(`recipes[${index}].recipe_ingredients`)(text)}
-              />
-               <TextInput
-                style={styles.input}
-                placeholder={`Recipe Content`}
-                value={recipe.recipe_content}
-                onChangeText={(text) => handleChange(`recipes[${index}].recipe_content`)(text)}
-              />
-               <TextInput
-                style={styles.input}
-                placeholder={`Recipe image`}
-                value={recipe.recipe_image}
-                onChangeText={(text) => handleChange(`recipes[${index}].recipe_image`)(text)}
-              />
-            
-                      <TouchableOpacity
-                 style={styles.addButton}
                  
-                 onPress={() => {
-                   
-                   handleChange(`recipes[${index}]`)(values.recipes.concat({ recipe_name: '', recipe_ingredients: '', recipe_content: '', recipe_ingredients_content: '', recipe_image: ''}));
+              {recipes.map((recipe, index) => (
+  <View key={index} style={styles.recipe}>
+    <View style={styles.recipeContainer}>
+    <TextInput
+      style={styles.inputRecipe}
+      placeholder={`Recipe Name`}
+      value={recipe.recipe_name}
+      onChangeText={(name) => {
+        const updatedRecipes = [...recipes];
+        updatedRecipes[index] = { ...recipe, recipe_name: name };
+        setRecipes(updatedRecipes);
+      }}
+    />
+    <TextInput
+      style={styles.inputRecipe}
+      placeholder={`Recipe Ingredients`}
+      value={recipe.recipe_ingredients}
+      onChangeText={(ingredients) => {
+        const updatedRecipes = [...recipes];
+        updatedRecipes[index] = { ...recipe, recipe_ingredients: ingredients };
+        setRecipes(updatedRecipes);
+      }}
+      multiline
+    />
+    <TextInput
+      style={styles.inputRecipe}
+      placeholder={`Recipe Content`}
+      value={recipe.recipe_content}
+      onChangeText={(content) => {
+        const updatedRecipes = [...recipes];
+        updatedRecipes[index] = { ...recipe, recipe_content: content };
+        setRecipes(updatedRecipes);
+      }}
+      multiline
+    />
+    <TextInput
+      style={styles.inputRecipe}
+      placeholder={`Recipe image`}
+      value={recipe.recipe_image}
+      onChangeText={(image) => {
+        const updatedRecipes = [...recipes];
+        updatedRecipes[index] = { ...recipe, recipe_image: image };
+        setRecipes(updatedRecipes);
+      }}
+    />
+
+        <TouchableOpacity onPress={handleDeleteRecipe(index)}>
+        <Text style={styles.deleteRecipeButton}>Delete</Text>
+      </TouchableOpacity>
+  </View>
+</View>
+))}
+                <TouchableOpacity style={styles.addButton}
+                 onPress={handleAddRecipe}>
                    <Text style={styles.addRecipeButtonText}>Add another recipe</Text>
-                  }}
-                 ></TouchableOpacity>
-           
-            </View>
-          </View>
-          ))}
-              
+                 </TouchableOpacity>
+   
+         
+                 </View>
               <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
                 <Text style={styles.submitButtonText}>Post Event</Text>
               </TouchableOpacity>
-              
-          
-      
+        
           </ScrollView>
-          </KeyboardAvoidingView>
-        </SafeAreaView>
-      )}
-    </Formik>
-  );
-};
+                </SafeAreaView>
+      )
+    }
+
+
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-    
-
-    
+    backgroundColor: '#f5f5f5',  
   },
   eventContainer: {
     borderColor: '#e47a2e',
-      padding:10, 
+      // padding:10, 
       
 
   },
   event: {
-
-   padding: 10
+   padding: 15
   },
   eventHeader: {
     alignItems: "start",
@@ -223,44 +268,45 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
-
-  // autofillButton: {
-  //   backgroundColor: '#e47a2e',
-  //   paddingVertical: 10,
-  //   paddingHorizontal: 20,
-  //   borderRadius: 10,
-  //   marginBottom: 20,
-  //   alignSelf: 'flex-start',
-  // },
-  // autofillButtonText: {
-  //   color: 'white',
-  //   fontFamily: "Jost_600SemiBold",
-  //   fontSize: 16,
-  // },
   input: {
 
     borderColor: '#ccc',
-    borderWidth: 1,
+    borderWidth: 2,
     borderRadius: 10,
     padding:20,
-    marginBottom: 16,
-    fontSize: 16,
+    marginBottom: 18,
+    marginTop: 18,
+    fontSize: 17,
     fontFamily: "Jost_600SemiBold",
      
   },
+  inputRecipe: {
+    borderColor: '#ccc',
+    borderWidth: 2,
+    borderRadius: 10,
+    padding:20,
+    marginBottom: 14,
+    marginTop: 14,
+    fontSize: 17,
+    fontFamily: "Jost_600SemiBold",
+  },
+
+
   textArea: {
      
     height: 100,
     textAlignVertical: 'top',
   },
   counterContainer: {
-    marginBottom: 20,
+    marginBottom: 18,
+    marginTop: 18,
   },
   label: {
     fontSize: 16,
     fontFamily: "Jost_600SemiBold",
     color: '#333',
-    marginBottom: 8,
+    marginBottom: 15,
+    marginLeft:10,
   },
   counter: {
     flexDirection: 'row',
@@ -268,12 +314,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
   },
   addButton: {
-    flexDirection: "row",
-    alignItems: 'center',
-    justifyContent: "center",
+    // flexDirection: "row",
+    // alignItems: 'center',
+    // justifyContent: "center",
     gap: 10,
     backgroundColor: "#F1C046",
-    marginLeft: 65,
+    marginLeft: 140,
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 15,
@@ -314,6 +360,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#5daa80',
     padding: 10,
 
+    marginBottom: 10,
 
   }, 
   recipeContainer: {
@@ -325,4 +372,4 @@ const styles = StyleSheet.create({
   
 });
 
-export default AddEventScreen;
+export default AddEventcreen;
