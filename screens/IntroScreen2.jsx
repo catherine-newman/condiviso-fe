@@ -53,11 +53,10 @@ import {
       if(imageLoading) return <Text>Loading...</Text>
     return (
         <View style={styles.container} {...panResponder.panHandlers}>
-            
             <Text style={styles.headerText}>What is a condiviso?</Text>
-            <Text style={styles.regularText}>It is a gathering
-              where you can either host people in your local
-              community or simply attend and get to know
+            <Text style={styles.regularText}>It's a gathering
+              where you either host people from your local
+              community, or simply attend and get to know
               the folks nearby. "Condiviso" is the Italian word 
                     for "shared", and we hope by sharing 
                     this app with the world, less food 
@@ -65,64 +64,57 @@ import {
                     will be made.
             </Text>
             <Image source={{ uri: imageUrl }} style={styles.intro2Image}/>
-            <TouchableOpacity onPress={onPart1Press} style={styles.arrow}> 
-                <View>
+            <View style={styles.navElemsContainer}>
+              <TouchableOpacity onPress={onPart1Press}> 
                   <Text style={styles.arrowText}>Intro (part 1)</Text>
                   <AntDesign
                       name="arrowleft"
                       size={30}
                       color="black"
                   />
-                </View>
-            </TouchableOpacity>
-            <View style={styles.circlesContainer}>
-                <Entypo onPress={onPart1Press} style={styles.circles} name="circle" size={23} color="black" />
-                <FontAwesome style={styles.circles} name="circle" size={24} color="black" />
-            </View>
-            <TouchableOpacity style={styles.mainSiteButton}>
-              <Text style={styles.mainSite} onPress={onMainSitePress}>Go to main site</Text>
-            </TouchableOpacity>
+              </TouchableOpacity>
+              <View style={styles.circlesContainer}>
+                <TouchableOpacity>
+                    <Entypo onPress={onPart1Press} style={styles.circles} name="circle" size={14} color="black" />
+                </TouchableOpacity>    
+                <FontAwesome style={styles.circles} name="circle" size={15} color="black" />
+              </View>
+              <TouchableOpacity style={styles.mainSiteButton}>
+                 <Text style={styles.mainSite} onPress={onMainSitePress}>Go to main site</Text>
+              </TouchableOpacity>
+            </View> 
         </View>
     )
   }
 
   const styles = StyleSheet.create({
+    container: {
+      backgroundColor: "#5daa80",
+      flex: 1,
+    },
     intro2Image: {
       width: "40%",
       resizeMode: "cover",
       borderRadius: 10,
       aspectRatio: 1,
-      marginLeft: "25%",
+      marginLeft: "27%",
       marginTop: "5%",
+      marginBottom: "10%",
       },
-    container: {
-      backgroundColor: "#5daa80",
-    //   flex: 1,
-    //   paddingBottom: 20, 
-    //   paddingLeft: 20, 
-    //   flexDirection: "row", 
-    },
-    arrow: {
-      position: "absolute",
-      bottom: "3.5%",
-      left: "5%",
-      zIndex: 1,
-      // left: "10%",
-  //   padding: 20,
-  //   marginLeft: 20,
-  //   justifyContent: "flex-end", 
-  //   alignItems: "flex-end", 
-  },
+      navElemsContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center', 
+        backgroundColor: "white",
+      },
     circlesContainer: {
-      backgroundColor: "white",
-      padding: "12%",
-      flexDirection: "row", 
-      justifyContent: "center",
-      alignItems: "end", 
-        // marginBottom: 20,
-        // marginLeft: -10.5,
-        // flexDirection: "row",
-        // alignItems: "flex-end", 
+        paddingHorizontal: 20,
+        flexDirection: "row", 
+        justifyContent: "center",
+        alignItems: "end", 
+        marginBottom: 20,
+        marginRight: 5,
       },
       circles: {
         padding: 3,
@@ -145,10 +137,8 @@ import {
       },
       arrowText: {
         fontSize: 16,
-        marginRight: '5%',
-        marginLeft: '-5%',
-       fontFamily: "Jost_400Regular",
-       color: "black",
+        fontFamily: "Jost_400Regular",
+        color: "black",
       },
       mainSite: {
        fontFamily: "Jost_400Regular",
@@ -156,28 +146,11 @@ import {
        color: "black",
       },
       mainSiteButton: {
-        position: "absolute",
-        bottom: "9%",
-        right: "5%",
-        zIndex: 2,
+        marginBottom: '8%',
       }
   });
   
 
-//   const styles = StyleSheet.create({
-//     container: {
-//       flex: 1,
-//       flexDirection: "row", // Use row direction to align arrow at bottom
-//     },
-//     arrow: { 
-//         justifyContent: "flex-end", // Align arrow to the right (end) of the row
-//         alignItems: "flex-end", 
-//       padding: 20, 
-//     },
-//     circles: {
-//         justifyContent: "flex-end", // Align arrow to the right (end) of the row
-//         alignItems: "flex-end", 
-//     }
-//   });
+
   
   export default IntroScreen2;

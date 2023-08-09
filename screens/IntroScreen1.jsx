@@ -52,23 +52,28 @@ import { recipeImagesRef } from "../firebaseConfig";
             <Text style={styles.headerText}>Welcome to Condiviso</Text>
             <Text style={styles.regularText}>Savor the sweet experience of something shared </Text>
             <Image source={{ uri: imageUrl }} style={styles.intro1Image}/>
-            <TouchableOpacity style={styles.skipButton}>
-                <Text onPress={onSkipIntroPress}>Skip intro</Text>
-            </TouchableOpacity>
-            <View style={styles.circlesContainer}>
-                <FontAwesome style={styles.circles} name="circle" size={24} color="black"/>
-                <Entypo onPress={onPart2Press} style={styles.circles} name="circle" size={23} color="black" />
-            </View>
-            <TouchableOpacity onPress={onPart2Press} style={styles.arrow}> 
-                <View>
-                <Text style={styles.arrowText}>Intro (part 2)</Text>
-                <AntDesign
-                    name="arrowright"
-                    size={30}
-                    color="black"
-                />
-                </View>
-            </TouchableOpacity>
+            <View style={styles.navElemsContainer}>
+              <TouchableOpacity style={styles.skipButton}>
+                  <Text onPress={onSkipIntroPress}>Skip intro</Text>
+              </TouchableOpacity>
+              <View style={styles.circlesContainer}>
+                  <FontAwesome style={styles.circles} name="circle" size={15} color="black"/>
+                  <TouchableOpacity>
+                     <Entypo onPress={onPart2Press} style={styles.circles} name="circle" size={14} color="black" />
+                  </TouchableOpacity>
+              </View>
+              <TouchableOpacity onPress={onPart2Press}> 
+                  <View>
+                    <Text style={styles.arrowText}>Intro (part 2)</Text>
+                    <AntDesign
+                        name="arrowright"
+                        size={30}
+                        color="black"
+                        style={styles.antDesign}
+                    />
+                  </View>
+              </TouchableOpacity>
+            </View> 
         </View>
     )
   }
@@ -77,9 +82,6 @@ import { recipeImagesRef } from "../firebaseConfig";
     container: {
         flex: 1,
         backgroundColor: "#5daa80",
-        // paddingBottom: 20, 
-        // paddingLeft: 20, 
-        // flexDirection: "row", 
       },
       intro1Image: {
         width: "69.5%",
@@ -88,25 +90,18 @@ import { recipeImagesRef } from "../firebaseConfig";
         aspectRatio: 1,
         marginLeft: "14%",
         marginTop: "7%",
+        marginBottom: "9.75%",
       },
-    arrow: {
-        position: "absolute",
-        bottom: "2.5%",
-        right: "5%",
-        zIndex: 1,
-    //   padding: 20,
-    //   marginLeft: 20,
-    //   justifyContent: "flex-end", 
-    //   alignItems: "flex-end", 
-    },
-    circlesContainer: {
-        // position: "absolute",
-        // top: "80%",
-        // right: "50%",
-        // marginBottom: 20,
-        // marginLeft: 130,
+      navElemsContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center', 
         backgroundColor: "white",
-        padding: "12%",
+      },
+    circlesContainer: {
+        marginBottom: 20,
+        paddingHorizontal: 20,
         flexDirection: "row", 
         justifyContent: "center",
         alignItems: "end", 
@@ -129,39 +124,20 @@ import { recipeImagesRef } from "../firebaseConfig";
        fontFamily: "Jost_400Regular",
        color: "white",
       },
+      antDesign: {
+        paddingLeft: "15%"
+      },
       arrowText: {
         fontSize: 16,
-        marginRight: '5%',
-        marginLeft: '-5%',
-       fontFamily: "Jost_400Regular",
-       color: "black",
+        fontFamily: "Jost_400Regular",
+        color: "black",
       },
       skipButton: {
-        position: "absolute",
-        bottom: "9%",
-        left: "5%",
-        zIndex: 2,
+        marginBottom: '7.5%',
+        fontFamily: "Jost_400Regular",
+        fontSize: 16,
       }
   });
-  
-//   const styles = StyleSheet.create({
-//     container: {
-//       flex: 1,
-//       justifyContent: "flex-end", 
-//       alignItems: "flex-end", 
-//       paddingBottom: 20, 
-//       paddingLeft: 20, 
-//       flexDirection: "row", 
-//     },
-//     arrow: {
-//       padding: 20,
-//       marginLeft: 20, 
-//     },
-//     circles: {
-//       marginBottom: 20, 
-//       padding: 3,
-//     },
-//   });
   
 
   export default IntroScreen1;
