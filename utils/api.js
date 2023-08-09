@@ -18,7 +18,7 @@ const getSingleEvent = (eventId) => {
 const getSingleUser = (user_id) => {
     const endpoint = `/users/${user_id}`;
     return condivisoApi.get(endpoint).then((res) => {
-        return res.data;
+        return res.data.user;
     })
 }
 
