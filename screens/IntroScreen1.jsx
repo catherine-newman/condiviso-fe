@@ -13,7 +13,7 @@ import { recipeImagesRef } from "../firebaseConfig";
     const navigation = useNavigation();
 
     useEffect(() => {
-        const storageRef = ref(recipeImagesRef, "tiramisu.jpeg"); 
+        const storageRef = ref(recipeImagesRef, "sharing-dessert.png"); 
         getDownloadURL(storageRef)
           .then((url) => {
             setImageUrl(url);
@@ -49,12 +49,14 @@ import { recipeImagesRef } from "../firebaseConfig";
       if(imageLoading) return <Text>Loading...</Text>
     return (
         <View  style={styles.container} {...panResponder.panHandlers}> 
+          <View style={styles.headerContainer}>
             <Text style={styles.headerText}>Welcome to Condiviso</Text>
-            <Text style={styles.regularText}>Savor the sweet experience of something shared </Text>
+          </View>
+            <Text style={styles.regularText}>Savour the sweet experience of something shared </Text>
             <Image source={{ uri: imageUrl }} style={styles.intro1Image}/>
             <View style={styles.navElemsContainer}>
               <TouchableOpacity style={styles.skipButton}>
-                  <Text onPress={onSkipIntroPress}>Skip intro</Text>
+                  <Text onPress={onSkipIntroPress}>Skip Intro</Text>
               </TouchableOpacity>
               <View style={styles.circlesContainer}>
                   <FontAwesome style={styles.circles} name="circle" size={15} color="black"/>
@@ -64,7 +66,7 @@ import { recipeImagesRef } from "../firebaseConfig";
               </View>
               <TouchableOpacity onPress={onPart2Press}> 
                   <View>
-                    <Text style={styles.arrowText}>Intro (part 2)</Text>
+                    <Text style={styles.arrowText}>Next</Text>
                     <AntDesign
                         name="arrowright"
                         size={30}
@@ -110,11 +112,14 @@ import { recipeImagesRef } from "../firebaseConfig";
         padding: 3,
         marginHorizontal: 2, 
       },
+      headerContainer: {
+        alignItems: 'center',
+      },
       headerText: {
         fontFamily: "Jost_600SemiBold",
         fontSize: 34,
         color: "white",
-        marginLeft: "4%",
+        // marginLeft: "4%",
         marginTop: "7%",
       },
       regularText: {
