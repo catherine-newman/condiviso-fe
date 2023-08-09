@@ -83,7 +83,7 @@ import {
                 </TouchableOpacity>    
                 <FontAwesome style={styles.circles} name="circle" size={15} color="black" />
               </View>
-              <TouchableOpacity style={styles.startButton}>
+              <TouchableOpacity >
                  <Text style={styles.start} onPress={onMainSitePress}>Start</Text>
               </TouchableOpacity>
             </View> 
@@ -93,45 +93,29 @@ import {
 
   const styles = StyleSheet.create({
     container: {
-      backgroundColor: "#5daa80",
       flex: 1,
-      height: "100%",
-      width: "100%",
-      // alignItems: "center",
+      backgroundColor: "#5daa80",
       justifyContent: 'space-between',
       alignItems: "center",
     },
     intro2Image: {
-      // width: "40%",
       width:  '60%',
-      resizeMode: "cover",
-      // borderRadius: 10,
+      resizeMode: "contain",
       aspectRatio: 1,
-      // marginLeft: "20%",
-      // marginTop: "5%",
-      // marginBottom: "10%",
       },
       navElemsContainer: {
-        // position: 'absolute', //new
-        // bottom: 10, //new
-        // right: 20, //new
-        // width: 400, //new
-        bottom: 0, //new 
-        // flex: 1,
-        width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-around',
-        alignItems: 'flex-end', 
+        alignItems: 'start', 
         backgroundColor: "white",
+        height: 80,
+        width: '100%',
         padding: 10,
       },
     circlesContainer: {
-        paddingHorizontal: 20,
         flexDirection: "row", 
         justifyContent: "center",
         alignItems: "end", 
-        marginBottom: 30, //new
-        // marginRight: 5,
       },
       circles: {
         padding: 3,
@@ -144,18 +128,16 @@ import {
         fontFamily: "Jost_600SemiBold",
         fontSize: 35,
         color: "white",
-        // marginLeft: "6%",
         marginTop: "7%",
-
+        marginBottom: "5%" 
       },
       regularTextContainer: {
         alignItems: 'center',
         width: "80%",
+        marginBottom: -19,
       },
       regularText: {
         fontSize: 16,
-        // marginLeft: '10%',
-        // marginRight: "6%",
         marginTop: "2%",
        fontFamily: "Jost_400Regular",
        color: "white",
@@ -170,9 +152,6 @@ import {
        fontSize: 16,
        color: "black",
       },
-      startButton: {
-        marginBottom: 30,
-      }
   });
   
 
