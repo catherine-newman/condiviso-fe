@@ -111,7 +111,8 @@ export default function CalendarScreen() {
           theme={customTheme}
         
         />
-        {isLoading && <Text>Loading...</Text>}
+        {isLoading && <View style={styles.messageContainer}><Text style={styles.message}>Loading...</Text></View>}
+        {!isLoading && calendarEvents.length === 0 && <View style={styles.messageContainer}><Text style={styles.message}>No nearby events</Text></View>}
         {!isLoading && (
           <AgendaList sections={calendarEvents} renderItem={renderItem} />
         )}
@@ -180,6 +181,19 @@ const styles = StyleSheet.create({
   todayButton: {
     backgroundColor: "white",
     color: "green"
+  },
+
+  messageContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+  },
+
+  message: {
+    fontSize: 20,
+    color: "black",
+    fontFamily: "Jost_400Regular",
+    textAlign: "center",
   }
 });
 

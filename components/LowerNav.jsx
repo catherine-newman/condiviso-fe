@@ -65,7 +65,7 @@ const LowerNav = () => {
           color={currentScreen === "Calendar" ? "#5daa80" : "black"}
         />
       </TouchableOpacity>
-      {user && (
+      {user._id && (
         <TouchableOpacity onPress={onProfilePress} activeOpacity={0.5}>
           <AntDesign
             name="user"
@@ -74,7 +74,7 @@ const LowerNav = () => {
           />
         </TouchableOpacity>
       )}
-      {!user && (
+      {!user._id && (
         <TouchableOpacity onPress={handleSignUpPress} activeOpacity={0.5}>
           <AntDesign
             name="login"
@@ -83,7 +83,7 @@ const LowerNav = () => {
           />
         </TouchableOpacity>
       )}
-      {user && (
+      {/* {user && (
         <TouchableOpacity
           onPress={handleInboxPress}
           activeOpacity={currentScreen === "Group Chat" ? 1 : 0.5}
@@ -94,7 +94,7 @@ const LowerNav = () => {
             color={currentScreen === "Group Chat" ? "#5daa80" : "black"}
           />
         </TouchableOpacity>
-      )}
+      )} */}
     </View>
   );
 };

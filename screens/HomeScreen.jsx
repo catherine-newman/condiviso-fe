@@ -22,9 +22,10 @@ const HomeScreen = () => {
   const [mapEvents, setMapEvents] = useState([]);
   const [currentRegion, setCurrentRegion] = useState(null);
   const [hideFullEvents, setHideFullEvents] = useState(false);
+  const [isLocationFound, setIsLocationFound] = useState(false);
 
   useEffect(() => {
-    if (currentRegion) {
+    if (currentRegion && isLocationFound) {
       getEvents(null, null, null, currentRegion.longitude, currentRegion.latitude, null, null, hideFullEvents)
       .then((data) => {
         if (data && data.events) {
@@ -34,7 +35,7 @@ const HomeScreen = () => {
       .catch((error) => {
         console.error("Error fetching events:", error);
       })
-    } else if (userPosition.lat !== null && userPosition.lon !== null) {
+    } else if (userPosition.lat !== null && userPosition.lon !== null && isLocationFound) {
       getEvents(null, null, null, userPosition.lon, userPosition.lat)
         .then((data) => {
           if (data && data.events) {
@@ -49,7 +50,7 @@ const HomeScreen = () => {
           setIsLoading(false);
         });
     }
-  }, [userPosition, currentRegion, hideFullEvents]);
+  }, [userPosition, currentRegion, hideFullEvents, isLocationFound]);
 
   useEffect(() => {
     const getLocation = async () => {
@@ -61,11 +62,13 @@ const HomeScreen = () => {
             lat: location.coords.latitude,
             lon: location.coords.longitude,
           });
+          setIsLocationFound(true);
         }
         if (status === "denied") {
-          if (user) {
+          if (user.postcode) {
             const location = await getCoordinates(user.postcode);
             await setUserPosition({ lat: location[1], lon: location[0] });
+            setIsLocationFound(true);
           }
         }
       } catch (err) {
@@ -86,7 +89,6 @@ const HomeScreen = () => {
           }}
           title={event.event_name}
           image={require('../styles/markers/marker6.png')}
-          description={event.event_description}
           onPress={() => handleMarkerPress(event)}
 
         />
@@ -127,7 +129,9 @@ const HomeScreen = () => {
     );
   };
 
-  if (isLoading) return <Text>Loading...</Text>
+  if (!isLocationFound) return <View style={styles.messageContainer}><Text style={styles.message}>Please enable location services or login to use Condiviso</Text></View>
+
+  if (isLoading) return <View style={styles.messageContainer}><Text style={styles.message}>Loading...</Text></View>
   return (
    <View style={styles.container}>
     <Checkbox label="Hide full events" checked={hideFullEvents} onChange={toggleHideFullEvents} />
@@ -293,4 +297,18 @@ const styles = StyleSheet.create({
     color: "white",
     fontFamily: "Jost_400Regular"
   },
+
+
+  messageContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+  },
+
+  message: {
+    fontSize: 20,
+    color: "black",
+    fontFamily: "Jost_400Regular",
+    textAlign: "center",
+  }
 });
