@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useEffect ,useContext} from "react";
 import { useState } from "react";
@@ -33,12 +34,14 @@ const SignUpScreen = ({ navigation }) => {
     const handleEnterButtonPress = () => {
         setUsername(enteredUsername)
     }
+    // const navigation = useNavigation();
 
     useEffect(() => {
         if(username.length > 0){
        getSingleUser(username)
        .then((data)=>{
         setUser(data)
+        navigation.navigate("Home");
         })
         .catch((err)=>{
             console.log(err);
@@ -57,6 +60,7 @@ const SignUpScreen = ({ navigation }) => {
         })
         .then((data) => {
           setUser(data);
+          navigation.navigate("Home")
         })
        .catch((err)=>{
         console.log(err)
@@ -100,11 +104,14 @@ const SignUpScreen = ({ navigation }) => {
             <View>
             <View>
                 <TextInput
+                style = {styles.input}
                 placeholder = "Enter Username"
                 value = {enteredUsername}
                 onChangeText={setEnteredUsername}
                 />
-                <TextInput placeholder = "Enter Password"/>
+                <TextInput 
+                style ={styles.input}
+                placeholder = "Enter Password"/>
             
             <View style = {styles.buttonContainer}>
                 <TouchableOpacity
@@ -170,37 +177,40 @@ const styles = StyleSheet.create({
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: "white",
+      backgroundColor: "#5daa80", 
+      padding: 40,
+      marginTop: 40,
     },
     title: {
       fontSize: 24,
       marginBottom: 20,
+      color: "white",
     },
     loginButton: {
       fontSize: 18,
       marginBottom: 20,
-      color: "#00adf5",
+      color: "white",
     },
     input: {
-      width: "80%",
-      borderWidth: 1,
-      borderColor: "gray",
-      padding: 10,
-      marginBottom: 10,
+        width: "100%", // Make the input wider
+        borderWidth: 1,
+        borderColor: "gray",
+        padding: 10,
+        marginBottom: 10,
+        backgroundColor: "white",
+        borderRadius: 5,
+        color: "#333",
+        textAlign: "center", // Center the text horizontally
+        textAlignVertical: "center", // Center the text vertically
     },
     buttonContainer: {
       flexDirection: "row",
       justifyContent: "space-between",
       marginTop: 10,
     },
-    button: {
-      padding: 10,
-      borderRadius: 5,
-      width: "48%",
-      alignItems: "center",
-    },
     buttonText: {
       fontWeight: "bold",
+      color: "white",
     },
     enterButton: {
       backgroundColor: "#00adf5",
@@ -217,64 +227,37 @@ const styles = StyleSheet.create({
     orText: {
       fontSize: 16,
       marginVertical: 10,
+      color: "white",
     },
     signupButton: {
       fontSize: 18,
       marginTop: 20,
-      color: "#00adf5",
+      color: "white",
     },
     signupLabel: {
       fontSize: 16,
       marginBottom: 10,
+      color: "white",
     },
-    // submitButton: {
-    //   backgroundColor: "#4caf50",
-    // },
     submitButtonText: {
       color: "white",
     },
+    submitButton: {
+      backgroundColor: "#5daa80",
+      padding: 10,
+      borderRadius: 5,
+      width: "60%",
+      marginBottom: 10,
+    },
+    cancelButton: {
+      backgroundColor: "#e74c3c", 
+      padding: 10,
+      borderRadius: 5,
+      width: "60%",
+      marginBottom: 20,
+    },
+});
 
-    orContainer: {
-        alignItems: "center",
-        marginVertical: 20,
-      },
-      orText: {
-        fontFamily: "Jost_400Regular",
-        fontSize: 18,
-        color: "#5daa80",
-      },
-    
-      signUpContainer: {
-
-      },
-      signUpTitle: {
-        fontFamily: "Jost_400Regular",
-        fontSize: 18,
-        color: "#ffffff",
-        marginBottom: 20,
-      },
-      signUpButtonText: {
-        fontFamily: "Jost_400Regular",
-        fontSize: 18,
-        color: "#5daa80", 
-        textAlign: "center",
-        marginBottom: 10,
-      },
-      submitButton: {
-        backgroundColor: "#5daa80",
-        padding: 10,
-        borderRadius: 5,
-        width: "60%",
-        marginBottom: 10,
-      },
-      cancelButton: {
-        backgroundColor: "#e74c3c", 
-        padding: 10,
-        borderRadius: 5,
-        width: "60%",
-        marginBottom: 20,
-      },
-    });
   
 
 
