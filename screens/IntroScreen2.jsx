@@ -19,7 +19,7 @@ import {
     const navigation = useNavigation();
 
     useEffect(() => {
-        const storageRef = ref(recipeImagesRef, "Stuffed_Bell_Peppers.jpeg"); 
+        const storageRef = ref(recipeImagesRef, "sharing-meal.png"); 
         getDownloadURL(storageRef)
           .then((url) => {
             setImageUrl(url);
@@ -53,7 +53,10 @@ import {
       if(imageLoading) return <Text>Loading...</Text>
     return (
         <View style={styles.container} {...panResponder.panHandlers}>
+          <View style={styles.headerContainer}>
             <Text style={styles.headerText}>What is a condiviso?</Text>
+          </View>  
+          <View style={styles.regularTextContainer}>
             <Text style={styles.regularText}>It's a gathering
               where you either host people from your local
               community, or simply attend and get to know
@@ -63,10 +66,11 @@ import {
                     will be wasted and more precious memories
                     will be made.
             </Text>
+          </View>
             <Image source={{ uri: imageUrl }} style={styles.intro2Image}/>
             <View style={styles.navElemsContainer}>
               <TouchableOpacity onPress={onPart1Press}> 
-                  <Text style={styles.arrowText}>Intro (part 1)</Text>
+                  <Text style={styles.arrowText}>Back</Text>
                   <AntDesign
                       name="arrowleft"
                       size={30}
@@ -79,8 +83,8 @@ import {
                 </TouchableOpacity>    
                 <FontAwesome style={styles.circles} name="circle" size={15} color="black" />
               </View>
-              <TouchableOpacity style={styles.mainSiteButton}>
-                 <Text style={styles.mainSite} onPress={onMainSitePress}>Go to main site</Text>
+              <TouchableOpacity >
+                 <Text style={styles.start} onPress={onMainSitePress}>Start</Text>
               </TouchableOpacity>
             </View> 
         </View>
@@ -89,48 +93,51 @@ import {
 
   const styles = StyleSheet.create({
     container: {
-      backgroundColor: "#5daa80",
       flex: 1,
+      backgroundColor: "#5daa80",
+      justifyContent: 'space-between',
+      alignItems: "center",
     },
     intro2Image: {
-      width: "40%",
-      resizeMode: "cover",
-      borderRadius: 10,
+      width:  '60%',
+      resizeMode: "contain",
       aspectRatio: 1,
-      marginLeft: "27%",
-      marginTop: "5%",
-      marginBottom: "10%",
       },
       navElemsContainer: {
-        flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-around',
-        alignItems: 'center', 
+        alignItems: 'start', 
         backgroundColor: "white",
+        height: 80,
+        width: '100%',
+        padding: 10,
       },
     circlesContainer: {
-        paddingHorizontal: 20,
         flexDirection: "row", 
         justifyContent: "center",
         alignItems: "end", 
-        marginBottom: 20,
-        marginRight: 5,
       },
       circles: {
         padding: 3,
         marginHorizontal: 2, 
       },
+      headerContainer: {
+        alignItems: 'center',
+      },
       headerText: {
         fontFamily: "Jost_600SemiBold",
         fontSize: 35,
         color: "white",
-        marginLeft: "6%",
         marginTop: "7%",
+        marginBottom: "5%" 
+      },
+      regularTextContainer: {
+        alignItems: 'center',
+        width: "80%",
+        marginBottom: -19,
       },
       regularText: {
         fontSize: 16,
-        marginLeft: '10%',
-        marginRight: "6%",
         marginTop: "2%",
        fontFamily: "Jost_400Regular",
        color: "white",
@@ -140,14 +147,11 @@ import {
         fontFamily: "Jost_400Regular",
         color: "black",
       },
-      mainSite: {
+      start: {
        fontFamily: "Jost_400Regular",
        fontSize: 16,
        color: "black",
       },
-      mainSiteButton: {
-        marginBottom: '8%',
-      }
   });
   
 

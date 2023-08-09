@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet, PanResponder } from "react-native";
+import { View, Text, Image, TouchableOpacity, StyleSheet, PanResponder, Dimensions } from "react-native";
   import { useNavigation } from "@react-navigation/native";
   import { getDownloadURL, ref } from "firebase/storage";
 import { recipeImagesRef } from "../firebaseConfig";
@@ -12,8 +12,9 @@ import { recipeImagesRef } from "../firebaseConfig";
     const [imageLoading, setImageLoading] = useState(true);
     const navigation = useNavigation();
 
+
     useEffect(() => {
-        const storageRef = ref(recipeImagesRef, "tiramisu.jpeg"); 
+        const storageRef = ref(recipeImagesRef, "sharing-dessert.png"); 
         getDownloadURL(storageRef)
           .then((url) => {
             setImageUrl(url);
@@ -49,12 +50,16 @@ import { recipeImagesRef } from "../firebaseConfig";
       if(imageLoading) return <Text>Loading...</Text>
     return (
         <View  style={styles.container} {...panResponder.panHandlers}> 
+          <View style={styles.headerContainer}>
             <Text style={styles.headerText}>Welcome to Condiviso</Text>
-            <Text style={styles.regularText}>Savor the sweet experience of something shared </Text>
+          </View>
+          <View style={styles.regularTextContainer}>
+            <Text style={styles.regularText}>Savour the sweet experience of something shared </Text>
+            </View>
             <Image source={{ uri: imageUrl }} style={styles.intro1Image}/>
             <View style={styles.navElemsContainer}>
               <TouchableOpacity style={styles.skipButton}>
-                  <Text onPress={onSkipIntroPress}>Skip intro</Text>
+                  <Text onPress={onSkipIntroPress} style={styles.skip}>Skip</Text>
               </TouchableOpacity>
               <View style={styles.circlesContainer}>
                   <FontAwesome style={styles.circles} name="circle" size={15} color="black"/>
@@ -64,7 +69,7 @@ import { recipeImagesRef } from "../firebaseConfig";
               </View>
               <TouchableOpacity onPress={onPart2Press}> 
                   <View>
-                    <Text style={styles.arrowText}>Intro (part 2)</Text>
+                    <Text style={styles.arrowText}>Next</Text>
                     <AntDesign
                         name="arrowright"
                         size={30}
@@ -82,26 +87,37 @@ import { recipeImagesRef } from "../firebaseConfig";
     container: {
         flex: 1,
         backgroundColor: "#5daa80",
+        justifyContent: 'space-between',
+        alignItems: "center",
       },
       intro1Image: {
-        width: "69.5%",
+        width: "70%",
         resizeMode: "cover",
         borderRadius: 10,
         aspectRatio: 1,
-        marginLeft: "14%",
         marginTop: "7%",
         marginBottom: "9.75%",
       },
       navElemsContainer: {
-        flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-around',
-        alignItems: 'center', 
+        alignItems: 'start', 
         backgroundColor: "white",
+        height: 80, 
+        width: "100%",
+        padding: 10,
+      },
+      navElemsContaineriPhone14ProMax: {
+        bottom: 0,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'start', 
+        backgroundColor: "white",
+        height: 80, 
+        width: "100%",
+        padding: 10,
       },
     circlesContainer: {
-        marginBottom: 20,
-        paddingHorizontal: 20,
         flexDirection: "row", 
         justifyContent: "center",
         alignItems: "end", 
@@ -110,22 +126,24 @@ import { recipeImagesRef } from "../firebaseConfig";
         padding: 3,
         marginHorizontal: 2, 
       },
+      headerContainer: {
+        alignItems: 'center',
+      },
       headerText: {
         fontFamily: "Jost_600SemiBold",
-        fontSize: 34,
+        fontSize: 35,
         color: "white",
-        marginLeft: "4%",
         marginTop: "7%",
+      },
+      regularTextContainer: {
+        alignItems: 'center',
+        width: "90%",
       },
       regularText: {
         fontSize: 16,
-        marginLeft: '7%',
         marginTop: "8%",
        fontFamily: "Jost_400Regular",
        color: "white",
-      },
-      antDesign: {
-        paddingLeft: "15%"
       },
       arrowText: {
         fontSize: 16,
@@ -133,11 +151,15 @@ import { recipeImagesRef } from "../firebaseConfig";
         color: "black",
       },
       skipButton: {
-        marginBottom: '7.5%',
+      }, 
+      skip: {
         fontFamily: "Jost_400Regular",
         fontSize: 16,
+        color: "black",
       }
   });
   
 
+
   export default IntroScreen1;
+
