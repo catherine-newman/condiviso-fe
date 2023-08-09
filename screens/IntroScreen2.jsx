@@ -80,7 +80,7 @@ import {
                 <FontAwesome style={styles.circles} name="circle" size={15} color="black" />
               </View>
               <TouchableOpacity style={styles.mainSiteButton}>
-                 <Text style={styles.mainSite} onPress={onMainSitePress}>Go to main site</Text>
+                 <Text style={styles.mainSite} onPress={onMainSitePress}>Go to Home Page</Text>
               </TouchableOpacity>
             </View> 
         </View>
