@@ -149,7 +149,7 @@ const ProfileScreen = () => {
                   source={{ uri: item.recipe_image }}
                   style={styles.recipeImage}
                 />
-                <Text style={styles.listItemName}>{item.recipe_name}</Text>
+                <Text style={styles.recipeItemName}>{item.recipe_name}</Text>
               </>
             )}
             {item.event_name && (
@@ -157,7 +157,7 @@ const ProfileScreen = () => {
                 <Text style={styles.eventDate}>
                   {formatDate(item.event_date)}, {item.event_city}
                 </Text>
-                <Text style={styles.recipeItemName}>{item.event_name}</Text>
+                <Text style={styles.eventItemName}>{item.event_name}</Text>
                 {item.spaces_free === 1 && (
                   <Text style={styles.eventPortions}>
                     {item.spaces_free} portion left.
@@ -245,16 +245,18 @@ const styles = StyleSheet.create({
  
   },
 
-  listItemName: {
+  recipeItemName: {
     fontSize: 20,
     fontFamily: "Jost_400Regular",
     color: "black",
     width: "75%",
   },
 
-  recipeItemName: {
-color: "white",
-
+  eventItemName: {
+    color: "white",
+    width: "75%",
+    fontSize: 20,
+    fontFamily: "Jost_400Regular",
   },
 
   eventDate: {
