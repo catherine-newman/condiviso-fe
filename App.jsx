@@ -13,6 +13,7 @@ import AddEventScreen from "./screens/AddEventScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import IntroScreen1 from "./screens/IntroScreen1";
 import IntroScreen2 from "./screens/IntroScreen2";
+import EventConfirmationScreen from "./screens/ConfirmationScreen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import {
@@ -53,6 +54,7 @@ export default function App() {
                 <Stack.Screen name="Intro1" component={IntroScreen1} />
                 <Stack.Screen name="Intro2" component={IntroScreen2} />
                 <Stack.Screen name="Add Event" component={AddEventScreen} />
+                <Stack.Screen name="Event Confirmation" component={EventConfirmationScreen} />
                 <Stack.Screen name="Profile" component={ProfileScreen} />
                 <Stack.Screen name="Home" component={HomeScreen} />
                 <Stack.Screen name="Calendar" component={CalendarScreen} />
