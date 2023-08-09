@@ -111,7 +111,7 @@ export default function CalendarScreen() {
           theme={customTheme}
         
         />
-        {isLoading && <Text>Loading...</Text>}
+        {isLoading && <Text style={styles.loading}>Loading...</Text>}
         {!isLoading && (
           <AgendaList sections={calendarEvents} renderItem={renderItem} />
         )}
@@ -151,6 +151,13 @@ const styles = StyleSheet.create({
     marginRight: 8,
 
     marginLeft:8
+  },
+  loading: {
+    backgroundColor: "#5daa80",
+    color: "white",
+    fontSize: 16
+ 
+    
   },
 
   checkboxContainer: {

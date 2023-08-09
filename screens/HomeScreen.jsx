@@ -127,7 +127,7 @@ const HomeScreen = () => {
     );
   };
 
-  if (isLoading) return <Text>Loading...</Text>
+  if (isLoading) return <Text style={styles.loading}>Loading...</Text>
   return (
    <View style={styles.container}>
     <Checkbox label="Hide full events" checked={hideFullEvents} onChange={toggleHideFullEvents} />
@@ -236,6 +236,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#5daa80",
     justifyContent: "center",
     alignItems: "center",
+  },
+   loading: {
+    backgroundColor: "#5daa80",
+    color: "white",
+    fontSize: 16
+ 
+    
   },
 
   selectAnEventPromptText: {
