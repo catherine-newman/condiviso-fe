@@ -281,6 +281,7 @@ const SingleEventScreen = () => {
                 latitude: eventData.coordinate.coordinates[1],
                 longitude: eventData.coordinate.coordinates[0],
               }}
+              image={require('../styles/markers/marker6.png')}
             />
           )}
         </MapView>
