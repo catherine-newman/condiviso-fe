@@ -63,7 +63,7 @@ const LowerNav = () => {
           color={currentScreen === "Calendar" ? "#5daa80" : "black"}
         />
       </TouchableOpacity>
-      {user && (
+      {user._id && (
         <TouchableOpacity onPress={onProfilePress} activeOpacity={0.5}>
           <AntDesign
             name="user"
@@ -72,7 +72,7 @@ const LowerNav = () => {
           />
         </TouchableOpacity>
       )}
-      {!user && (
+      {!user._id && (
         <TouchableOpacity onPress={handleSignUpPress} activeOpacity={0.5}>
           <AntDesign
             name="login"
