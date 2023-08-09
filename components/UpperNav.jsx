@@ -28,7 +28,7 @@ const UpperNav = () => {
     navigation.goBack();
   };
 
-  if (currentScreen === "Intro1" || currentScreen === "Intro2") return null;
+  if (currentScreen === "Intro1" || currentScreen === "Intro2" || currentScreen === "Event Confirmation") return null;
 
   if (user) {
     return (

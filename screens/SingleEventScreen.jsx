@@ -193,6 +193,10 @@ const SingleEventScreen = () => {
   const handleAttendPress = () => {
     setIsAttending(true);
     setAttendClicked(true);
+    navigation.navigate("Event Confirmation", {
+      eventName: eventData.event_name,
+      eventDate: formatDate(eventData.event_date),
+    });
   };
 
   const handleCancelPress = () => {
