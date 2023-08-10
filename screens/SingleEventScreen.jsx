@@ -52,7 +52,6 @@ const SingleEventScreen = () => {
         setIsRecipeLoading(false);
       } catch (err) {
         console.log(err);
-        console.log("hello")
       }
     };
     if (!isEventLoading) {
@@ -319,7 +318,7 @@ const SingleEventScreen = () => {
               <View style={styles.portionIcons}>{portionIcons}</View>
             </View>
             <View style={styles.reservationContainer}>
-              {!isAttending && (
+              {!isAttending && user._id && (
                 <>
                   <Text style={styles.generalText}>
                     {eventData.spaces_free === 0 &&
@@ -356,7 +355,7 @@ const SingleEventScreen = () => {
                   )}
                 </>
               )}
-              {isAttending && (
+              {isAttending && user._id && (
                 <>
                   <Text style={styles.generalText}>
                     You're going to this event!
