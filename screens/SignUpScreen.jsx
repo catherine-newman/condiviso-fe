@@ -115,13 +115,13 @@ const SignUpScreen = ({ navigation }) => {
                 secureTextEntry={!passwordVisible}
                 />
                   <TouchableOpacity
-    style={styles.toggleButton}
-    onPress={() => setPasswordVisible(!passwordVisible)}
-  >
-    <Text style={styles.buttonText}>
-      {passwordVisible ? "Hide Password" : "Show Password"}
-    </Text>
-  </TouchableOpacity>
+//     style={styles.toggleButton}
+//     onPress={() => setPasswordVisible(!passwordVisible)}
+//   >
+//     <Text style={styles.buttonText}>
+//       {passwordVisible ? "Hide Password" : "Show Password"}
+//     </Text>
+//   </TouchableOpacity>
             {/* //ADDDING THE BUTTON */}
             <View style = {styles.buttonContainer}>
                 <TouchableOpacity
