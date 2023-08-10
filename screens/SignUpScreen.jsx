@@ -17,6 +17,7 @@ import { UserContext } from "../contexts/User";
 const SignUpScreen = ({ navigation }) => {
     const [signUpClicked, setSignUpClicked] = useState(false)
 
+    const { passwordVisibility, setPasswordVisibility} = useState(false)
     const [newUsername, setNewUsername] = useState("")
     const [newFirstname, setNewFirstname] = useState("")
     const [newLastname, setNewLastname] = useState("")
@@ -192,7 +193,7 @@ const styles = StyleSheet.create({
       color: "white",
     },
     input: {
-        width: "100%", // Make the input wider
+        width: "100%", 
         borderWidth: 1,
         borderColor: "gray",
         padding: 10,
@@ -200,8 +201,8 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         borderRadius: 5,
         color: "#333",
-        textAlign: "center", // Center the text horizontally
-        textAlignVertical: "center", // Center the text vertically
+        textAlign: "center", 
+        textAlignVertical: "center", 
     },
     buttonContainer: {
       flexDirection: "row",
