@@ -150,7 +150,41 @@ console.log(err);
 }
    
 
+const postUser = async(user_name, first_name, last_name, email, address, postcode, about_me) =>{
+    try{
+        const sendBody = 
+        {
+            user_name : user_name,
+            first_name : first_name,
+            last_name : last_name,
+            email : email,
+            address : address,
+            postcode : postcode,
+            about_me : about_me,
+        }
+        console.log(sendBody);
 
+        const res = await condivisoApi.post('/users', {
+            user_name : user_name,
+            first_name : first_name,
+            last_name : last_name,
+            email : email,
+            address : address,
+            postcode : postcode,
+            about_me : about_me,
+        })  
+    return res.data.result;
+    } catch(err){
+        console.log(err);
+    }
+}
+
+// const getSingleUser = (user_id) => {
+//     const endpoint = `/users/${user_id}`;
+//     return condivisoApi.get(endpoint).then((res) => {
+//         return res.data.user;
+//     })
+// }
 
 module.exports = {
     getSingleEvent,
@@ -162,5 +196,6 @@ module.exports = {
     getRecipe,
     patchAttendees,
     postEvent,
-    postRecipe
+    postRecipe,
+    postUser
 }
