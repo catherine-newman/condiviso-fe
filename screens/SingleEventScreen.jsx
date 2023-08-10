@@ -52,6 +52,7 @@ const SingleEventScreen = () => {
         setIsRecipeLoading(false);
       } catch (err) {
         console.log(err);
+        console.log("hello")
       }
     };
     if (!isEventLoading) {
