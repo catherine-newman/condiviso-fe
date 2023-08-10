@@ -89,7 +89,7 @@ const SignUpScreen = ({ navigation }) => {
     }
 
     return (
-    <ScrollView>
+    <ScrollView style={styles.scrollContainer}>
     <View style={styles.container}>
         
         <Text style = {styles.title}>Log-In or Sign-Up</Text>
@@ -114,14 +114,14 @@ const SignUpScreen = ({ navigation }) => {
                 placeholder = "Enter Password"
                 secureTextEntry={!passwordVisible}
                 />
-                  <TouchableOpacity
-//     style={styles.toggleButton}
-//     onPress={() => setPasswordVisible(!passwordVisible)}
-//   >
-//     <Text style={styles.buttonText}>
-//       {passwordVisible ? "Hide Password" : "Show Password"}
-//     </Text>
-//   </TouchableOpacity>
+                  {/* <TouchableOpacity
+    style={styles.toggleButton}
+    onPress={() => setPasswordVisible(!passwordVisible)}
+  >
+    <Text style={styles.buttonText}>
+      {passwordVisible ? "Hide Password" : "Show Password"}
+    </Text>
+  </TouchableOpacity> */}
             {/* //ADDDING THE BUTTON */}
             <View style = {styles.buttonContainer}>
                 <TouchableOpacity
@@ -146,9 +146,9 @@ const SignUpScreen = ({ navigation }) => {
             )}
 
             {!showUsernameInput &&(
-            <TouchableOpacity onPress = {toggleSignInInput}>
-                <Text style = {styles.signupButton}>Sign-Up</Text>
-                </TouchableOpacity>
+            <TouchableOpacity style={styles.signUpContainer} onPress = {toggleSignInInput}>
+                <Text style = {styles.signupButton}>Sign Up</Text>
+            </TouchableOpacity>
     )}
             {showSignUpInput &&(
                <View>
@@ -183,10 +183,13 @@ const SignUpScreen = ({ navigation }) => {
 
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    backgroundColor: "#5daa80", 
+  },
     container: {
       flex: 1,
       justifyContent: "center",
-      alignItems: "center",
+      // alignItems: "start",
       backgroundColor: "#5daa80", 
       padding: 40,
       marginTop: 40,
@@ -239,10 +242,18 @@ const styles = StyleSheet.create({
       marginVertical: 10,
       color: "white",
     },
+    signUpContainer: {
+      alignItems: 'start',
+    },
     signupButton: {
-      fontSize: 18,
-      marginTop: 20,
+      // fontSize: 18,
+      marginBottom: 10,
       color: "white",
+
+      paddingVertical: 10,
+
+      // paddingHorizontal: 20,
+      borderRadius: 8,
     },
     signupLabel: {
       fontSize: 16,
