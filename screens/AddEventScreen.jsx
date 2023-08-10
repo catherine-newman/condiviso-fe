@@ -36,7 +36,7 @@ const AddEventScreen = () => {
     recipe_name: "",
     recipe_ingredients: "",
     recipe_content: "",
-    recipe_image: "https://example.com/hardcoded-image.jpg",
+    recipe_image: "",
   });
 
   const [event, setEvent] = useState({
@@ -188,13 +188,14 @@ const AddEventScreen = () => {
     if (selectedImage && isUploadClicked) {
       console.log("selected image", selectedImage)
       handleUpload();
-    }
+    
+}
   }, [selectedImage, isUploadClicked])
 
   const handleUploadPress = () => {
     setIsUploadClicked(true);
   }
-  // const handleUpload = async () => {
+  // const handleUpload = async () => {sta
   //   if (!selectedImage) return;
   //   setUploading(true);
 
