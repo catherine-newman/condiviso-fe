@@ -1,9 +1,10 @@
 import React, { useState, useContext, useEffect } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { recipeImagesRef } from "../firebaseConfig";
-import { storage } from "../firebaseConfig";
-import { ref, getDownloadURL, uploadBytesResumable, uploadBytes } from "firebase/storage";
+import { storage, firebase } from "../firebaseConfig";
+import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { readAsStringAsync } from "expo-file-system";
+import { useNavigation } from "@react-navigation/native";
 
 import {
   View,
@@ -20,12 +21,14 @@ import { UserContext } from "../contexts/User";
 import {
   postEvent,
   postRecipe,
-  getFuzzyCoordinatesFromCoordinate,
+  getFuzzyCoordinatesFromCoordinate, getSingleEvent,
 } from "../utils/api";
+
 
 const AddEventScreen = () => {
   const { user, userPosition } = useContext(UserContext);
   const [numOfGuests, setNumOfGuests] = useState(1);
+  const navigation = useNavigation();
   const [selectedImage, setSelectedImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [downloadURL, setDownloadURL] = useState(null);
@@ -36,7 +39,7 @@ const AddEventScreen = () => {
     recipe_name: "",
     recipe_ingredients: "",
     recipe_content: "",
-    recipe_image: "https://example.com/hardcoded-image.jpg",
+    recipe_image: "hardcode-image.jpg",
   });
 
   const [event, setEvent] = useState({
@@ -64,8 +67,8 @@ const AddEventScreen = () => {
   useEffect(() => {
     getFuzzyCoordinatesFromCoordinate(userPosition.lon, userPosition.lat)
       .then((data) => {
-        latitude_fuzzy = data[0];
-        longitude_fuzzy = data[1];
+        latitude_fuzzy = data[1];
+        longitude_fuzzy = data[0];
         setEvent(() => {
           const newEvent = { ...event };
           newEvent.latitude_fuzzy = latitude_fuzzy;
@@ -121,8 +124,13 @@ const AddEventScreen = () => {
 
         return postEvent(newEvent);
       })
+      .then((postResult) => {
+        const eventId = postResult.result.insertedId;
+        return getSingleEvent(eventId);
+      })
       .then((eventData) => {
-        console.log(eventData.result);
+        const item = eventData;
+        navigation.navigate("Event Screen", { item })
       })
       .catch((error) => {
         console.log(error);
@@ -141,59 +149,76 @@ const AddEventScreen = () => {
     setEvent({ ...event, max_attendees: updatedNumOfAttendees });
   };
 
-  const requestImagePickerPermission = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      alert("Permission to access the photo library is required!");
-    }
-  };
+  // const requestImagePickerPermission = async () => {
+  //   const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  //   if (status !== "granted") {
+  //     alert("Permission to access the photo library is required!");
+  //   }
+  // };
 
-  const pickImage = async () => {
-    await requestImagePickerPermission();
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-    if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
-    }
-  };
+  // const pickImage = async () => {
+  //   await requestImagePickerPermission();
+  //   const result = await ImagePicker.launchImageLibraryAsync({
+  //     mediaTypes: ImagePicker.MediaTypeOptions.Images,
+  //     allowsEditing: true,
+  //     aspect: [4, 3],
+  //     quality: 1,
+  //   });
+  //   if (!result.canceled) {
+  //     setSelectedImage(result.assets[0].uri);
+  //   }
+  // };
 
-  useEffect(() => {
-    const handleUpload = async () => {
-      try {
-        const blob = await new Promise((resolve, reject) => {
-          const xhr = new XMLHttpRequest();
-          xhr.onload = function () {
-            resolve(xhr.response);
-          };
-          xhr.onerror = function (e) {
-            console.log(e);
-            reject(new TypeError("Network request failed"));
-          };
-          xhr.responseType = "blob";
-          xhr.open("GET", selectedImage, true);
-          xhr.send(null);
-        });
-        const result = await uploadBytes(recipeImagesRef, blob);
-        blob.close();
-        console.log(result)
-    
-      } catch(err) {
-        console.log(err)
-      }
-    }
-    if (selectedImage && isUploadClicked) {
-      console.log("selected image", selectedImage)
-      handleUpload();
-    }
-  }, [selectedImage, isUploadClicked])
+  // useEffect(() => {
+  //   const handleUpload = async () => {
+  //     setUploading(true);
+  
+  //     const imageContent = await readAsStringAsync(selectedImage, {
+  //       encoding: "base64",
+  //     });
 
-  const handleUploadPress = () => {
-    setIsUploadClicked(true);
-  }
+  //     const imageMimeType = selectedImage.endsWith(".png")
+  //       ? "image/png"
+  //       : selectedImage.endsWith(".jpeg") || selectedImage.endsWith(".jpg")
+  //       ? "image/jpeg"
+  //       : "image"; 
+
+  //     const blob = new Blob([imageContent], { type: imageMimeType });
+  //     const metadata = {
+  //       contentType: imageMimeType,
+  //     };
+      
+  //     const storageRef = ref(storage, `recipe-images/test4.jpeg`);
+  //     const uploadTask = uploadBytesResumable(storageRef, blob, metadata);
+  //     uploadTask.on(
+  //       "state_changed",
+  //       (snapshot) => {
+  //         const progress =
+  //         (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+  //       console.log(progress, snapshot.state, snapshot.metadata)
+        
+  //       },
+  //       (error) => {
+  //         alert(error);
+  //       },
+  //       async () => {
+  //         const downloadURL = await getDownloadURL(storageRef);
+  //         console.log(downloadURL)
+  //         setDownloadURL(downloadURL);
+  //         setUploading(false);
+  //       }
+  //     );
+  //   };
+  //   if (selectedImage && isUploadClicked) {
+  //     console.log("selected image", selectedImage)
+  //     handleUpload();
+  //   }
+  // }, [selectedImage, isUploadClicked])
+
+
+  // const handleUploadPress = () => {
+  //   setIsUploadClicked(true);
+  // }
   // const handleUpload = async () => {
   //   if (!selectedImage) return;
   //   setUploading(true);
@@ -343,7 +368,7 @@ const AddEventScreen = () => {
                 }}
                 multiline
               />
-              <Button title="Pick an image from gallery" onPress={pickImage} />
+              {/* <Button title="Pick an image from gallery" onPress={pickImage} />
               {selectedImage && (
                 <Image
                   source={{ uri: selectedImage }}
@@ -353,7 +378,7 @@ const AddEventScreen = () => {
               {selectedImage && (
                 <Button title="Upload Image" onPress={handleUploadPress} />
               )}
-              {uploading && <Text>Uploading...</Text>}
+              {uploading && <Text>Uploading...</Text>} */}
             </View>
           </View>
         </View>

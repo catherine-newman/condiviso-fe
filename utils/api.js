@@ -128,7 +128,6 @@ const postEvent = async (newEvent) => {
         const result = await condivisoApi.post('/events',
             postEventBody
         );
-        console.log(result)
         return result.data;
       } catch (err) {
         console.log(err);
