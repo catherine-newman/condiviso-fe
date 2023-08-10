@@ -1,301 +1,387 @@
-import React, { useState, useContext } from 'react';
-import { View, Text, StyleSheet, TextInput, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
-import { UserContext } from '../contexts/User';
-import { postEvent, postRecipe } from '../utils/api';
+import React, { useState, useContext, useEffect } from "react";
+import * as ImagePicker from "expo-image-picker";
+import { storage } from "../firebaseConfig";
+import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import { readAsStringAsync } from "expo-file-system";
 
-const AddEventcreen = () => {
-  const { user } = useContext(UserContext);
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  ScrollView,
+  SafeAreaView,
+  TouchableOpacity,
+  Button,
+  Image,
+} from "react-native";
+import { UserContext } from "../contexts/User";
+import {
+  postEvent,
+  postRecipe,
+  getFuzzyCoordinatesFromCoordinate,
+} from "../utils/api";
+
+const AddEventScreen = () => {
+  const { user, userPosition } = useContext(UserContext);
   const [numOfGuests, setNumOfGuests] = useState(1);
-    const [recipes, setRecipes] = useState([{
-       _id: '',
-      user_id: 'user.user_id',
-      recipe_name: '',
-      recipe_ingredients: '',
-      recipe_content: '',
-      recipe_image: '',
-  }] )
-  
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [downloadURL, setDownloadURL] = useState(null);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [recipe, setRecipe] = useState({
+    user_id: user._id,
+    recipe_name: "",
+    recipe_ingredients: "",
+    recipe_content: "",
+    recipe_image: "https://example.com/hardcoded-image.jpg",
+  });
+
   const [event, setEvent] = useState({
-    _id: '',
-    event_name: '',
-    first_name: 'user.first_name',
-    last_name: 'user.last_name',
-    user_name: 'user.user_name',
-    user_id: 'user.user_id',
-    email: 'user.email',
-    event_date: '',
-    event_location: 'user.address',
-    postcode: 'user.postcode',
-    latitude: '', 
-    longitude: '',
-    latitude_fuzzy: '',
-    longitude_fuzzy: '',
-    event_city: '',
-    event_description: '',
-    event_duration: '',
-    max_attendees: '',
-    attendees: '',
-    recipes:[]})
- 
+    event_name: "",
+    first_name: user.first_name,
+    last_name: user.last_name,
+    user_name: user.user_name,
+    user_id: user._id,
+    email: user.email,
+    event_date: "",
+    event_location: user.address,
+    postcode: user.postcode,
+    latitude: userPosition.lat,
+    longitude: userPosition.lon,
+    latitude_fuzzy: "",
+    longitude_fuzzy: "",
+    event_city: "",
+    event_description: "",
+    event_duration: "",
+    max_attendees: "",
+    attendees: [],
+    recipes: [],
+  });
 
-
-  const handleAddRecipe = () => {
-    setRecipes([
-      ...recipes,
-      {
-        _id: '',
-        user_id: 'user.user_id',
-        recipe_name: '',
-        recipe_ingredients: '',
-        recipe_content: '',
-        recipe_ingredients_content: '',
-        recipe_image: '',
-      },
-    ]);
-  };
-
-
-
-  const handleDeleteRecipe = (index) => {
-    console.log('here')
-    const updatedList = [...recipes]
-    updatedList.splice(index, 1)
-    setRecipes(updatedList)
-    console.log(updatedList)
-  };
-
-  
-  const handleSubmit = (values) => {
-    postEvent(values, user)
-      .then((postedEvent) => {
-             const eventId = postedEvent._id;
-
-        
-        const recipePromises = values.recipes.map((recipe) =>
-          postRecipe(eventId,recipe, user_id)
-        );
-
-         Promise.all(recipePromises)
-          .then((postedRecipes) => {
-            console.log( postedRecipes);
-          })
-          .catch((error) => {
-            console.error( error);
-          });
+  useEffect(() => {
+    getFuzzyCoordinatesFromCoordinate(userPosition.lon, userPosition.lat)
+      .then((data) => {
+        console.log(data);
+        latitude_fuzzy = data[0];
+        longitude_fuzzy = data[1];
       })
       .catch((error) => {
-        console.error( error);
+        console.error(error);
+      });
+  }, []);
+
+  useEffect(() => {
+    const inputBoxesValid =
+      Object.values(recipe).every((item) => item !== "")
+      // Object.values(event).every((item) => item !== null);
+      // console.log("Recipe:", recipe);
+      console.log("Event:", event);
+    setIsButtonDisabled(!inputBoxesValid);
+  }, [ event]);
+
+  const handleSubmit = () => {
+    postRecipe(
+      user._id,
+      recipe.recipe_name,
+      recipe.recipe_ingredients,
+      recipe.recipe_content,
+      recipe.recipe_image
+    )
+      .then((recipeData) => {
+        event.recipes.push(recipeData.result.insertedId);
+        const newEvent = {
+          event_name: event.event_name,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          user_name: user.user_name,
+          user_id: user._id,
+          email: user.email,
+          event_date: event.event_date,
+          event_location: user.address,
+          postcode: user.postcode,
+          latitude: userPosition.lat,
+          longitude: userPosition.lon,
+          latitude_fuzzy: latitude_fuzzy,
+          longitude_fuzzy: longitude_fuzzy,
+          event_city: event.event_city,
+          event_description: event.event_description,
+          event_duration: event.event_duration,
+          max_attendees: event.max_attendees,
+          attendees: event.attendees,
+          recipes: event.recipes,
+        };
+        console.log(newEvent);
+
+        return postEvent(newEvent);
+      })
+      .then((eventData) => {
+        console.log(eventData);
+      })
+      .catch((error) => {
+        console.log(error);
       });
   };
- 
- 
-   
 
-  
+  const handleDecreaseAttendees = () => {
+    const updatedNumOfAttendees = Math.max(numOfGuests - 1, 1);
+    setNumOfGuests(updatedNumOfAttendees);
+    setEvent({ ...event, max_attendees: updatedNumOfAttendees });
+  };
+
+  const handleIncreaseAttendees = () => {
+    const updatedNumOfAttendees = numOfGuests + 1;
+    setNumOfGuests(updatedNumOfAttendees);
+    setEvent({ ...event, max_attendees: updatedNumOfAttendees });
+  };
+  const requestImagePickerPermission = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      alert("Permission to access the photo library is required!");
+    }
+  };
+
+  const pickImage = async () => {
+    await requestImagePickerPermission();
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    console.log(result, "resukt");
+    if (!result.canceled) {
+      setSelectedImage(result.assets[0].uri);
+    }
+  };
+  const handleUpload = async () => {
+    if (!selectedImage) return;
+    setUploading(true);
+
+    const imageContent = await readAsStringAsync(selectedImage, {
+      encoding: "base64",
+    });
+    const blob = new Blob([imageContent], { type: "image/jpeg" });
+    const storageRef = ref(storage, `recipe-images/${Date.now()}`);
+    const uploadTask = uploadBytesResumable(storageRef, blob);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {},
+      (error) => {
+        alert(error);
+      },
+      async () => {
+        const downloadURL = await getDownloadURL(storageRef);
+        setDownloadURL(downloadURL);
+        setUploading(false);
+      }
+    );
+  };
+
   return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.eventHeader}>
+          <Text style={styles.header}>create event</Text>
+        </View>
+        <View style={styles.eventContainer}>
+          <View style={styles.event}>
+            <TextInput
+              style={styles.input}
+              maxLength={60}
+              placeholder="Event Name"
+              value={event.event_name}
+              required
+              onChangeText={(name) =>
+                setEvent({
+                  ...event,
+                  event_name: name,
+                })
+              }
+            />
 
-      <SafeAreaView style={styles.container}>
-                       <ScrollView style={styles.scrollView}>
-  
-               <View style={styles.eventHeader}>
-<Text style={styles.header}>create event</Text>
-</View>
- <View style={styles.eventContainer}> 
-<View style={styles.event}>
+            <TextInput
+              style={styles.input}
+              maxLength={60}
+              placeholder="Event date & start time (e.g.1 Aug 12:30)"
+              value={event.event_date}
+              required
+              onChangeText={(date) => setEvent({ ...event, event_date: date })}
+            />
+            <TextInput
+              style={styles.input}
+              maxLength={60}
+              placeholder="Event City"
+              value={event.event_city}
+              required
+              onChangeText={(City) => setEvent({ ...event, event_city: City })}
+            />
+            <TextInput
+              style={[styles.input, styles.textArea]}
+              maxLength={150}
+              placeholder="Event description"
+              value={event.event_description}
+              required
+              onChangeText={(description) =>
+                setEvent({ ...event, event_description: description })
+              }
+              multiline
+            />
+            <TextInput
+              style={styles.input}
+              maxLength={5}
+              placeholder="Event duration (hours)"
+              value={event.event_duration}
+              required
+              keyboardType="numeric"
+              onChangeText={(duration) =>
+                setEvent({ ...event, event_duration: duration })
+              }
+            />
+            <View style={styles.counterContainer}>
+              <Text style={styles.label}>Max number of guests</Text>
+              <View style={styles.counter}>
+                <TouchableOpacity
+                  style={styles.counterButton}
+                  onPress={handleDecreaseAttendees}
+                >
+                  <Text style={styles.counterButtonText}>-</Text>
+                </TouchableOpacity>
+                <Text style={styles.counterText}>{numOfGuests}</Text>
+                <TouchableOpacity
+                  style={styles.counterButton}
+                  onPress={handleIncreaseAttendees}
+                >
+                  <Text style={styles.counterButtonText}>+</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.recipe}>
+            <View style={styles.recipeContainer}>
               <TextInput
-                style={styles.input}
+                style={styles.inputRecipe}
                 maxLength={60}
-                placeholder="Event Name"
-                value={event.event_name}
-                onChangeText={(name) =>
-                  setEvent({ ...event, event_name: name })
-                }
+                placeholder={`Recipe Name`}
+                value={recipe.recipe_name}
+                required
+                onChangeText={(value) => {
+                  setRecipe({
+                    ...recipe,
+                    recipe_name: value,
+                  });
+                }}
               />
-              
+
               <TextInput
-                style={styles.input}
-                placeholder="Event date and start time (e.g.1 Aug 12:30)"
-                value={event.event_date}
-                onChangeText={(date) =>
-                  setEvent({ ...event, event_date: date })
-                }
-                
-                  // onBlur={() => {
-                  //   const formattedDate = formatDate(values.event_date);
-                  //   if (!formattedDate) {
-                  //     alert('Please enter a valid date and time.');
-                  //   }
-                  // }}
-                
-              />
-              <TextInput
-                style={[styles.input, styles.textArea]}
-                placeholder="Event description"
-                value={event.event_description}
-                onChangeText={(description) =>
-                  setEvent({ ...event, event_description: description })
-                }
+                style={styles.inputRecipe}
+                maxLength={200}
+                placeholder={`Recipe Ingredients`}
+                value={recipe.recipe_ingredients}
+                required
+                onChangeText={(value) => {
+                  setRecipe({
+                    ...recipe,
+                    recipe_ingredients: value,
+                  });
+                }}
                 multiline
               />
               <TextInput
-                style={styles.input}
-                placeholder="Event duration (e.g. 4 hours)"
-                value={event.event_duration}
-                onChangeText={(duration) =>
-                  setEvent({ ...event, event_duration: duration })
-                }
+                style={styles.inputRecipe}
+                maxLength={200}
+                placeholder={`Recipe Content`}
+                value={recipe.recipe_content}
+                required
+                onChangeText={(value) => {
+                  setRecipe({
+                    ...recipe,
+                    recipe_content: value,
+                  });
+                }}
+                multiline
               />
-              <View style={styles.counterContainer}>
-                <Text style={styles.label}>Max number of guests</Text>
-                <View style={styles.counter}>
-                  <TouchableOpacity
-                    style={styles.counterButton}
-                    onPress={() => setNumOfGuests(Math.max(numOfGuests - 1, 1))}
-                  >
-                    <Text style={styles.counterButtonText}>-</Text>
-                  </TouchableOpacity>
-                  <Text style={styles.counterText}>{numOfGuests}</Text>
-                  <TouchableOpacity
-                    style={styles.counterButton}
-                    onPress={() => setNumOfGuests(numOfGuests + 1)}
-                  >
-                    <Text style={styles.counterButtonText}>+</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-              </View>
-                 
-              {recipes.map((recipe, index) => (
-  <View key={index} style={styles.recipe}>
-    <View style={styles.recipeContainer}>
-    <TextInput
-      style={styles.inputRecipe}
-      placeholder={`Recipe Name`}
-      value={recipe.recipe_name}
-      onChangeText={(name) => {
-        const updatedRecipes = [...recipes];
-        updatedRecipes[index] = { ...recipe, recipe_name: name };
-        setRecipes(updatedRecipes);
-      }}
-    />
-    <TextInput
-      style={styles.inputRecipe}
-      placeholder={`Recipe Ingredients`}
-      value={recipe.recipe_ingredients}
-      onChangeText={(ingredients) => {
-        const updatedRecipes = [...recipes];
-        updatedRecipes[index] = { ...recipe, recipe_ingredients: ingredients };
-        setRecipes(updatedRecipes);
-      }}
-      multiline
-    />
-    <TextInput
-      style={styles.inputRecipe}
-      placeholder={`Recipe Content`}
-      value={recipe.recipe_content}
-      onChangeText={(content) => {
-        const updatedRecipes = [...recipes];
-        updatedRecipes[index] = { ...recipe, recipe_content: content };
-        setRecipes(updatedRecipes);
-      }}
-      multiline
-    />
-    <TextInput
-      style={styles.inputRecipe}
-      placeholder={`Recipe image`}
-      value={recipe.recipe_image}
-      onChangeText={(image) => {
-        const updatedRecipes = [...recipes];
-        updatedRecipes[index] = { ...recipe, recipe_image: image };
-        setRecipes(updatedRecipes);
-      }}
-    />
-
-        <TouchableOpacity onPress={handleDeleteRecipe(index)}>
-        <Text style={styles.deleteRecipeButton}>Delete</Text>
-      </TouchableOpacity>
-  </View>
-</View>
-))}
-                <TouchableOpacity style={styles.addButton}
-                 onPress={handleAddRecipe}>
-                   <Text style={styles.addRecipeButtonText}>Add another recipe</Text>
-                 </TouchableOpacity>
-   
-         
-                 </View>
-              <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-                <Text style={styles.submitButtonText}>Post Event</Text>
-              </TouchableOpacity>
-        
-          </ScrollView>
-                </SafeAreaView>
-      )
-    }
-
-
+              <Button title="Pick an image from gallery" onPress={pickImage} />
+              {selectedImage && (
+                <Image
+                  source={{ uri: selectedImage }}
+                  style={{ width: 200, height: 200, marginTop: 20 }}
+                />
+              )}
+              {selectedImage && (
+                <Button title="Upload Image" onPress={handleUpload} />
+              )}
+              {uploading && <Text>Uploading...</Text>}
+            </View>
+          </View>
+        </View>
+        <TouchableOpacity
+          style={styles.submitButton}
+          onPress={handleSubmit}
+          disabled={isButtonDisabled}
+        >
+          <Text style={styles.submitButtonText}>Post Event</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
+  );
+  
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',  
+    backgroundColor: "#f5f5f5",
   },
   eventContainer: {
-    borderColor: '#e47a2e',
-      // padding:10, 
-      
-
+    borderColor: "#e47a2e",
+    // padding:10,
   },
   event: {
-   padding: 15
+    padding: 15,
   },
   eventHeader: {
     alignItems: "start",
-    
-      justifyContent: "center",
-        padding: 30,
-      justifyContent: "start",
-    backgroundColor: "#e47a2e",
 
+    justifyContent: "center",
+    padding: 30,
+    justifyContent: "start",
+    backgroundColor: "#e47a2e",
   },
   header: {
     fontFamily: "Jost_600SemiBold",
-    color: 'white',
+    color: "white",
     fontSize: 20,
-
-
   },
   scrollView: {
     flex: 1,
   },
   input: {
-
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderWidth: 2,
     borderRadius: 10,
-    padding:20,
+    padding: 20,
     marginBottom: 18,
     marginTop: 18,
     fontSize: 17,
     fontFamily: "Jost_600SemiBold",
-     
   },
   inputRecipe: {
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderWidth: 2,
     borderRadius: 10,
-    padding:20,
+    padding: 20,
     marginBottom: 14,
     marginTop: 14,
     fontSize: 17,
     fontFamily: "Jost_600SemiBold",
   },
 
-
   textArea: {
-     
     height: 100,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
   },
   counterContainer: {
     marginBottom: 18,
@@ -304,14 +390,14 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontFamily: "Jost_600SemiBold",
-    color: '#333',
+    color: "#333",
     marginBottom: 15,
-    marginLeft:10,
+    marginLeft: 10,
   },
   counter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-evenly",
   },
   addButton: {
     // flexDirection: "row",
@@ -325,51 +411,47 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   addRecipeButtonText: {
-      color: 'white',
+    color: "white",
     fontFamily: "Jost_600SemiBold",
     fontSize: 18,
   },
   counterButton: {
-    backgroundColor: '#e47a2e',
+    backgroundColor: "#e47a2e",
     width: 32,
     height: 32,
     borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   counterButtonText: {
-    color: 'white',
+    color: "white",
     fontFamily: "Jost_600SemiBold",
     fontSize: 18,
   },
   submitButton: {
-    backgroundColor: '#e47a2e',
+    backgroundColor: "#e47a2e",
     paddingVertical: 12,
     borderRadius: 10,
     marginTop: 20,
   },
   submitButtonText: {
-    color: 'white',
+    color: "white",
     fontFamily: "Jost_600SemiBold",
     fontSize: 18,
-    textAlign: 'center',
+    textAlign: "center",
   },
 
   recipe: {
-    borderColor: '#ccc',
-    backgroundColor: '#5daa80',
+    borderColor: "#ccc",
+    backgroundColor: "#5daa80",
     padding: 10,
 
     marginBottom: 10,
-
-  }, 
-  recipeContainer: {
-    backgroundColor: '#f0f0f0',
-    padding: 10,
-
-
   },
-  
+  recipeContainer: {
+    backgroundColor: "#f0f0f0",
+    padding: 10,
+  },
 });
 
-export default AddEventcreen;
+export default AddEventScreen;
