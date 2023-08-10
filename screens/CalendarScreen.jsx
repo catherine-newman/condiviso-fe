@@ -111,7 +111,7 @@ export default function CalendarScreen() {
           theme={customTheme}
         
         />
-        {isLoading && <Text style={styles.loading}>Loading...</Text>}
+        {isLoading && <Text >Loading...</Text>}
         {!isLoading && (
           <AgendaList sections={calendarEvents} renderItem={renderItem} />
         )}

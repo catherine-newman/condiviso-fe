@@ -127,7 +127,7 @@ const HomeScreen = () => {
     );
   };
 
-  if (isLoading) return <Text style={styles.loading}>Loading...</Text>
+  if (isLoading) return <Text>Loading...</Text>
   return (
    <View style={styles.container}>
     <Checkbox label="Hide full events" checked={hideFullEvents} onChange={toggleHideFullEvents} />
