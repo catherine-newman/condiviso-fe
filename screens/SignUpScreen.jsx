@@ -17,7 +17,7 @@ import { UserContext } from "../contexts/User";
 const SignUpScreen = ({ navigation }) => {
     const [signUpClicked, setSignUpClicked] = useState(false)
 
-    const { passwordVisibility, setPasswordVisibility} = useState(false)
+    const { passwordVisible, setPasswordVisible} = useState(false)
     const [newUsername, setNewUsername] = useState("")
     const [newFirstname, setNewFirstname] = useState("")
     const [newLastname, setNewLastname] = useState("")
@@ -35,7 +35,6 @@ const SignUpScreen = ({ navigation }) => {
     const handleEnterButtonPress = () => {
         setUsername(enteredUsername)
     }
-    // const navigation = useNavigation();
 
     useEffect(() => {
         if(username.length > 0){
@@ -112,8 +111,18 @@ const SignUpScreen = ({ navigation }) => {
                 />
                 <TextInput 
                 style ={styles.input}
-                placeholder = "Enter Password"/>
-            
+                placeholder = "Enter Password"
+                secureTextEntry={!passwordVisible}
+                />
+                  <TouchableOpacity
+    style={styles.toggleButton}
+    onPress={() => setPasswordVisible(!passwordVisible)}
+  >
+    <Text style={styles.buttonText}>
+      {passwordVisible ? "Hide Password" : "Show Password"}
+    </Text>
+  </TouchableOpacity>
+            {/* //ADDDING THE BUTTON */}
             <View style = {styles.buttonContainer}>
                 <TouchableOpacity
                 onPress = {handleEnterButtonPress}
@@ -257,6 +266,9 @@ const styles = StyleSheet.create({
       width: "60%",
       marginBottom: 20,
     },
+    toggleButton: {
+        alignSelf: "flex-end", 
+      },
 });
 
   
