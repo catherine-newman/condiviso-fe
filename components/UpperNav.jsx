@@ -52,6 +52,7 @@ const UpperNav = () => {
             </View>
           </TouchableOpacity>
         )}
+        {user._id && (
         <TouchableOpacity onPress={onAddEventPress} activeOpacity={0.8}>
           <View style={styles.addEvent}>
             <Text style={styles.text}>Add event</Text>
@@ -63,6 +64,7 @@ const UpperNav = () => {
             />
           </View>
         </TouchableOpacity>
+        )}
       </View>
     );
   }
