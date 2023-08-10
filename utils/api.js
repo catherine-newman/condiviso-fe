@@ -101,6 +101,55 @@ const patchAttendees = async (event_id, patchBody) => {
         console.log(err)
     }
 }
+const postEvent = async (newEvent) => {
+        const postEventBody = {
+         event_name: newEvent.event_name,
+            first_name: newEvent.first_name,
+            last_name: newEvent.last_name,
+            user_name: newEvent.user_name,
+            user_id: newEvent.user_id,
+            email: newEvent.email,
+            event_date: newEvent.event_date,
+            event_location: newEvent.event_location,
+            postcode: newEvent.postcode,
+            latitude: newEvent.latitude,
+            longitude: newEvent.longitude,
+            latitude_fuzzy: newEvent.latitude_fuzzy,
+            longitude_fuzzy: newEvent.longitude_fuzzy,
+            event_city: newEvent.event_city,
+            event_description: newEvent.event_description,
+            event_duration: newEvent.event_duration,
+            max_attendees: newEvent.max_attendees,
+            attendees: newEvent.attendees,
+            recipes: newEvent.recipes
+          }
+            try {
+              
+        const result = await condivisoApi.post('/events',
+            postEventBody
+        );
+        console.log(result)
+        return result.data;
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+   const postRecipe = async ( user_id, recipe_name, recipe_ingredients, recipe_content, recipe_image ) => {
+
+const postRecipeBody = {user_id, recipe_name, recipe_ingredients, recipe_content, recipe_image 
+
+}
+try {const result = await condivisoApi.post('/recipes',
+    postRecipeBody
+    );
+
+return result.data;
+} catch (err) {
+console.log(err);
+}
+}
+   
 
 
 
@@ -113,4 +162,6 @@ module.exports = {
     getRecipes,
     getRecipe,
     patchAttendees,
+    postEvent,
+    postRecipe
 }
