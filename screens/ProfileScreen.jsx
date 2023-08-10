@@ -55,23 +55,31 @@ const ProfileScreen = () => {
     const fetchProfileData = async (id) => {
       try {
         const data = [];
-        const recipesRes = await getRecipes(id);
-        const recipeImagePaths = recipesRes.recipes.map((recipe) => {
-          return recipe.recipe_image;
-        });
-        const imageRefs = recipeImagePaths.map((path) =>
-          ref(recipeImagesRef, path)
-        );
-        const imageURLs = await Promise.all(
-          imageRefs.map((ref) => getDownloadURL(ref))
-        );
-        const newRecipes = recipesRes.recipes.map((recipe, i) => {
-          const newRecipe = { ...recipe };
-          newRecipe.recipe_image = imageURLs[i];
-          return newRecipe;
-        });
-        data.push({ title: "My Recipes", data: newRecipes });
-        const eventsHostingRes = await getEvents(id);
+        try {
+          const recipesRes = await getRecipes(id);
+        
+        if (recipesRes) {
+          const recipeImagePaths = recipesRes.recipes.map((recipe) => {
+            return recipe.recipe_image;
+          });
+          const imageRefs = recipeImagePaths.map((path) =>
+            ref(recipeImagesRef, path)
+          );
+          const imageURLs = await Promise.all(
+            imageRefs.map((ref) => getDownloadURL(ref))
+          );
+          const newRecipes = recipesRes.recipes.map((recipe, i) => {
+            const newRecipe = { ...recipe };
+            newRecipe.recipe_image = imageURLs[i];
+            return newRecipe;
+          });
+          data.push({ title: "My Recipes", data: newRecipes });
+        }
+       } catch(err) {
+          console.log(err)
+        }
+        try {
+          const eventsHostingRes = await getEvents(id);
         data.push({ title: "Hosting Events", data: eventsHostingRes.events });
         if (route.params === undefined) {
           const eventsAttendingRes = await getEvents(
@@ -89,6 +97,9 @@ const ProfileScreen = () => {
             title: "Attending Events",
             data: eventsAttendingRes.events,
           });
+        }
+        } catch(err) {
+          console.log(err)
         }
         setProfileData(data);
         setProfileLoading(false);
