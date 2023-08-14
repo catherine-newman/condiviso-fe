@@ -35,6 +35,7 @@ const SingleEventScreen = () => {
   const [portionIcons, setPortionsIcons] = useState([]);
   const [portions, setPortions] = useState(1);
 
+
   useEffect(() => {
     setEventData(JSON.parse(JSON.stringify(item)));
     setIsEventLoading(false);
@@ -234,18 +235,22 @@ const SingleEventScreen = () => {
           <Text style={styles.largeText}>
             {eventData.user_name} is hosting!
           </Text>
-          <TouchableOpacity
-            onPress={handleUserPress}
-            style={styles.viewProfile}
-          >
-            <Text style={styles.buttonText}>Check profile</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={handleEditEventPress}
-            style={styles.viewProfile}
-          >
-            <Text style={styles.buttonText}>Edit Event</Text>
-          </TouchableOpacity>
+          <View style={styles.buttonsContainer}>
+            <TouchableOpacity
+              onPress={handleUserPress}
+              style={styles.viewProfile}
+            >
+              <Text style={styles.buttonText}>Check profile</Text>
+            </TouchableOpacity>
+            {user._id === eventData.user_id && (
+              <TouchableOpacity
+              onPress={handleEditEventPress}
+              style={styles.editEvent}
+            >
+              <Text style={styles.buttonText}>Edit Event</Text>
+            </TouchableOpacity>
+            )}
+          </View>
         </View>
         
         {!isRecipeLoading && (
@@ -403,7 +408,6 @@ const styles = StyleSheet.create({
     gap: 10,
     backgroundColor: "#5daa80",
     borderRadius: 8,
-    // margin: 8,
   },
 
   largeText: {
@@ -417,7 +421,11 @@ const styles = StyleSheet.create({
     fontFamily: "Jost_400Regular",
     color: "white",
   },
-
+  buttonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 10,
+  },
   buttonText: {
     fontSize: 20,
     fontFamily: "Jost_400Regular",
@@ -480,6 +488,17 @@ const styles = StyleSheet.create({
 
   viewProfile: {
     alignItems: "center",
+    margin: '1%',
+    justifyContent: "center",
+    backgroundColor: "#F1C046",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    width: 160,
+  },
+  editEvent: {
+    alignItems: "center",
+    margin: '1%',
     justifyContent: "center",
     backgroundColor: "#F1C046",
     borderRadius: 10,

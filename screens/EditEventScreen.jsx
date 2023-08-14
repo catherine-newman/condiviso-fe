@@ -11,26 +11,12 @@ const EditEventScreen = ({ route }) => {
     const [markedDates, setMarkedDates] = useState({});
     const [newEventDescription, setNewEventDescription] = useState();
     const [newEventDuration, setNewEventDuration] = useState();
+    const [numberPrompt, setNumberPrompt] = useState(false);
     const [currentEventInfo, setCurrentEventInfo ] = useState({});
-    // const [currentEventId, setCurrentEventId] =  useState();
     const [updatedEvent, setUpdatedEvent ] = useState();
     useEffect(() => {
         setCurrentEventInfo(route.params.eventData)
     }, [])
-
-    // {
-//     event_name: 'Salad Party',
-//     event_date: '2023-08-24T00:00:00.000Z',
-//     event_description: 'Who says salad is boring? No one after my amazing salad parties',
-//     event_duration: 3,
-//     attendees: [
-//         {
-//             first_name: "Marchelle",
-//             user_id: "64c7abf68c2d17441844e6fd"
-//         }
-//     ]
-// }
-
 
     const onChangeEventName = (eventName) => {
         setNewEventName(eventName)
@@ -45,9 +31,12 @@ const EditEventScreen = ({ route }) => {
         setNewEventDescription(eventDescription)
     }
     const onChangeEventDuration = (eventDuration) => {
-        // if(typeof eventDuration === 'number') {
+        if(!isNaN(eventDuration)) {
             setNewEventDuration(eventDuration);
-        // }
+            setNumberPrompt(false);
+        } else {
+            setNumberPrompt(true);
+        }
     }
 
     const handleSubmit = () => {
@@ -61,7 +50,6 @@ const EditEventScreen = ({ route }) => {
         if(newEventDuration) patchBody.event_duration = newEventDuration
         else patchBody.event_duration = currentEventInfo.event_duration;
         patchBody.attendees = currentEventInfo.attendees;
-
         patchEvent(currentEventInfo._id, patchBody).then((data) => {
             setUpdatedEvent(data)
         })
@@ -87,12 +75,6 @@ const EditEventScreen = ({ route }) => {
                 placeholder="Event Name"
             />
 
-            {/* <TextInput
-                style={styles.input}
-                onChangeText={onChangeEventDate}
-                placeholder="Event Date"
-            /> */}
-
             <TextInput
                 style={styles.input}
                 onChangeText={onChangeEventDescription}
@@ -106,6 +88,13 @@ const EditEventScreen = ({ route }) => {
                 placeholder="Event Duration in hours"
                 keyboardType="numeric"
             />
+            {numberPrompt && (
+                <View style={styles.numberPromptContainer}>
+                    <Text style={styles.numberPromptText}>
+                     Please enter a digit for the Event Duration
+                    </Text>
+                 </View>
+            )}
             <View style={styles.regularTextContainer}>
                 <Text style={styles.regularText}>
                     Choose a new date on the calendar
@@ -114,7 +103,6 @@ const EditEventScreen = ({ route }) => {
             <Calendar
                 onDayPress={onChangeEventDate}
                 markedDates={markedDates}
-                // markedDates={newEventDate ? { [newEventDate]: { selected: true } } : {}}
             />
 
 
@@ -127,9 +115,6 @@ const EditEventScreen = ({ route }) => {
                 <Text style={styles.submitButtonText}>Submit</Text>
             </TouchableOpacity>
             )}
-            {/* <TouchableOpacity style={styles.submitButton} onPress={onReturnEventPress}>
-                <Text style={styles.submitButtonText}>Return to Event</Text>
-            </TouchableOpacity> */}
         </View>
     );
 
@@ -158,8 +143,18 @@ const styles = StyleSheet.create({
     },
     regularTextContainer: {
         alignItems: 'center',
+        marginTop: '6%',
     },
     regularText: {
+        color: 'white',
+        fontSize: 16,
+        fontFamily: "Jost_400Regular",
+        marginTop: '0%',
+    },
+    numberPromptContainer: {
+        alignItems: 'center',
+    },
+    numberPromptText: {
         color: 'white',
         fontSize: 16,
         fontFamily: "Jost_400Regular",
@@ -181,7 +176,6 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         backgroundColor: "#F1C046",
         borderRadius: 10,
-        // paddingVertical: 10,
         paddingHorizontal: 15,
         width: 160,
         alignSelf: "center", 
