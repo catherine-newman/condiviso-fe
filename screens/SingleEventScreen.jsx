@@ -175,6 +175,9 @@ const SingleEventScreen = () => {
     const item = eventData.user_id;
     navigation.navigate("Profile", { item });
   };
+  const handleEditEventPress = () => {
+    navigation.navigate("Edit Event", { item, eventData });
+  };
 
   const handleMinusPress = () => {
     if (portions > 1) {
@@ -237,7 +240,14 @@ const SingleEventScreen = () => {
           >
             <Text style={styles.buttonText}>Check profile</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleEditEventPress}
+            style={styles.viewProfile}
+          >
+            <Text style={styles.buttonText}>Edit Event</Text>
+          </TouchableOpacity>
         </View>
+        
         {!isRecipeLoading && (
           <>
             <Text style={styles.sectionText}>On the menu</Text>
@@ -392,6 +402,8 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 10,
     backgroundColor: "#5daa80",
+    borderRadius: 8,
+    // margin: 8,
   },
 
   largeText: {
