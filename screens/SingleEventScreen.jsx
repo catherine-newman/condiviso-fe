@@ -176,6 +176,10 @@ const SingleEventScreen = () => {
     navigation.navigate("Profile", { item });
   };
 
+  const handleEditEventPress = () => {
+    navigation.navigate("Edit Event", { item, eventData });
+  };
+
   const handleMinusPress = () => {
     if (portions > 1) {
       const newPortions = portions - 1;
@@ -235,12 +239,22 @@ const SingleEventScreen = () => {
           <Text style={styles.largeText}>
             {eventData.user_name} is hosting!
           </Text>
-          <TouchableOpacity
-            onPress={handleUserPress}
-            style={styles.viewProfile}
-          >
-            <Text style={styles.buttonText}>Check profile</Text>
-          </TouchableOpacity>
+          <View style={styles.buttonsContainer}>
+            <TouchableOpacity
+              onPress={handleUserPress}
+              style={styles.viewProfile}
+            >
+              <Text style={styles.buttonText}>Check profile</Text>
+            </TouchableOpacity>
+            {user._id === eventData.user_id && (
+                <TouchableOpacity
+                onPress={handleEditEventPress}
+                style={styles.editEvent}
+              >
+                <Text style={styles.buttonText}>Edit Event</Text>
+              </TouchableOpacity>
+              )}
+          </View>
         </View>
         {!isRecipeLoading && (
           <>
@@ -470,8 +484,24 @@ const styles = StyleSheet.create({
     height: 150,
   },
 
+  buttonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 10,
+  },
   viewProfile: {
     alignItems: "center",
+    margin: '1%',
+    justifyContent: "center",
+    backgroundColor: "#F1C046",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    width: 160,
+  },
+  editEvent: {
+    alignItems: "center",
+    margin: '1%',
     justifyContent: "center",
     backgroundColor: "#F1C046",
     borderRadius: 10,
