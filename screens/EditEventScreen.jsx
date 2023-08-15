@@ -38,6 +38,10 @@ const EditEventScreen = ({ route }) => {
             setNumberPrompt(true);
         }
     }
+    const onDeselectPress = () => {
+        setMarkedDates({});
+        setNewEventDate(null);
+    }
 
     const handleSubmit = () => {
         const patchBody = {};
@@ -91,22 +95,30 @@ const EditEventScreen = ({ route }) => {
             {numberPrompt && (
                 <View style={styles.numberPromptContainer}>
                     <Text style={styles.numberPromptText}>
-                     Please enter a digit for the Event Duration
+                        Enter only digits for the Event Duration
                     </Text>
                  </View>
             )}
+            {!newEventDate ? (
             <View style={styles.regularTextContainer}>
                 <Text style={styles.regularText}>
                     Choose a new date on the calendar
                 </Text>
             </View>
+            ) : (
+            <TouchableOpacity style={styles.submitButton} onPress={onDeselectPress}>
+                <Text style={styles.submitButtonText}>
+                    Deselect date
+                </Text>
+            </TouchableOpacity>
+            )}
             <Calendar
                 onDayPress={onChangeEventDate}
                 markedDates={markedDates}
             />
 
 
-            {!newEventName && !newEventDate && !newEventDescription && !newEventDuration ? (
+            {!newEventName && !newEventDate && !newEventDescription && !newEventDuration || numberPrompt ? (
             <TouchableOpacity style={styles.completeFieldPrompt}>
                 <Text style={styles.completeFieldPromptText}>Edit the details of your event in the fields above</Text>
             </TouchableOpacity>
@@ -177,6 +189,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#F1C046",
         borderRadius: 10,
         paddingHorizontal: 15,
+        marginVertical: 10,
         width: 160,
         alignSelf: "center", 
       },
