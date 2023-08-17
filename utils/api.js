@@ -101,6 +101,21 @@ const patchAttendees = async (event_id, patchBody) => {
         console.log(err)
     }
 }
+const patchEvent = async (event_id, patchBody) => {
+    try {
+        const res = await condivisoApi.patch(`/events/${event_id}`, {
+            event_name: patchBody.event_name,
+            event_duration: patchBody.event_duration,
+            event_date: patchBody.event_date,
+            event_description: patchBody.event_description,
+            attendees: patchBody.attendees,
+            max_attendees: patchBody.max_attendees
+        })
+        return res.data;
+    } catch(err) {
+        console.log(err)
+    }
+}
 const postEvent = async (newEvent) => {
         const postEventBody = {
          event_name: newEvent.event_name,
@@ -195,6 +210,7 @@ module.exports = {
     getRecipes,
     getRecipe,
     patchAttendees,
+    patchEvent,
     postEvent,
     postRecipe,
     postUser

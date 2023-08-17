@@ -23,6 +23,8 @@ import {
 } from "@expo-google-fonts/jost";
 import RecipeScreen from "./screens/RecipeScreen";
 import SingleEventScreen from "./screens/SingleEventScreen";
+import UpdatedEventScreen from "./screens/UpdatedEventScreen";
+import EditEventScreen from "./screens/EditEventScreen";
 
 const Stack = createStackNavigator();
 
@@ -65,6 +67,8 @@ export default function App() {
                   name="Event Screen"
                   component={SingleEventScreen}
                 />
+                <Stack.Screen name="Edit Event" component = {EditEventScreen} /> 
+                <Stack.Screen name="Updated Event" component = {UpdatedEventScreen} />
               </Stack.Navigator>
               <LowerNav />
             </NavigationContainer>
