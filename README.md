@@ -58,26 +58,14 @@ For a full list of dependencies, refer to the [package.json](./package.json) fil
 
 ## Firebase Configuration
 
-To connect the app to your Firebase project, you will need to set up the `firebaseConfig.js` file. For security reasons, the actual configuration is not included in this repository.
+To connect the app to your Firebase project, it is necessary to set up the `firebaseConfig.js` file in the root directory of the project. For security reasons, the actual configuration is not included in this repository. The `firebaseConfigExample.js` file included in this repository can be used as a template for the firebaseConfig.js. To produce a complete `firebaseConfig.js`, take the content of the `firebaseConfigExample.js` and replace the placeholders for the following fields with valid credentials: 
 
-To set up the `firebaseConfig.js` file, follow these steps:
-
-1. Create a new file named `firebaseConfig.js` in the root directory of the project.
-2. Open your Firebase project in the Firebase Console.
-3. Go to Project Settings > General and find your Firebase SDK configuration.
-4. Copy the configuration object, which looks something like this:
-
-```javascript
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID",
-};
-
-export default firebaseConfig;
+- apiKey
+- authDomain
+- projectId
+- storageBucket
+- messagingSenderId
+- appId
 
 ## Contributors:
 
